@@ -1,67 +1,47 @@
+# Header-only library
+
 include(vcpkg_common_functions)
-set(GSOAP_VERSION 2.8)
-set(GSOAP_SUB_VERSION .84)
-set(SOURCE_PATH ${CURRENT_BUILDTREES_DIR}/src/gsoap-${GSOAP_VERSION})
 
-vcpkg_download_distfile(ARCHIVE
-    URLS "https://ayera.dl.sourceforge.net/project/gsoap2/gsoap-${GSOAP_VERSION}/gsoap_${GSOAP_VERSION}${GSOAP_SUB_VERSION}.zip"
-    FILENAME "gsoap_${GSOAP_VERSION}${GSOAP_SUB_VERSION}.zip"
-    SHA512 ec050119cd3e480b266cad36823f4862fe0ac21045ce901c3c91a552eae2fbf9e1cd515458835807cce54c04df7835a980a299d37f418190cd57684fd6bdcf79
+vcpkg_from_github(
+    OUT_SOURCE_PATH CURRENT_BUILDTREES_DIR
+    REPO hpcc-systems/gsoap
+    REF v2.7.13
+    SHA512 d4b5b967cf3e8e5134cb2b0d575c41dbde1a298d3c47aefc89ff58be6120e78e9b76179a3cc09a9e4a42f97adb5c117b121811c98a1b319b4390e39e6fe494c0
+    HEAD_REF master
 )
 
-vcpkg_extract_source_archive_ex(
-    OUT_SOURCE_PATH SOURCE_PATH
-    ARCHIVE ${ARCHIVE}
-    PATCHES
-       "${CMAKE_CURRENT_LIST_DIR}/fix-build-in-windows.patch"
-)
+file(COPY ${CURRENT_BUILDTREES_DIR}/gsoap DESTINATION ${CURRENT_PACKAGES_DIR}/share)
 
-if (VCPKG_TARGET_ARCHITECTURE STREQUAL "x86")
-    set(BUILD_ARCH "Win32")
-else()
-    message("gsoap only supported Win32")
-    set(BUILD_ARCH "Win32")
-endif()
+file(COPY ${CURRENT_BUILDTREES_DIR}/gsoap/stdsoap2.h DESTINATION ${CURRENT_PACKAGES_DIR}/include/gsoap)
 
-# Handle binary files and includes
-file(MAKE_DIRECTORY ${CURRENT_PACKAGES_DIR}/tools/gsoap ${CURRENT_PACKAGES_DIR}/debug/tools)
-
-if (NOT VCPKG_CMAKE_SYSTEM_NAME OR VCPKG_CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
-    vcpkg_build_msbuild(
-        USE_VCPKG_INTEGRATION
-        PROJECT_PATH ${SOURCE_PATH}/gsoap/VisualStudio2005/soapcpp2/soapcpp2.sln
-        PLATFORM ${BUILD_ARCH}
-        TARGET Build
-    )
-    vcpkg_build_msbuild(
-        USE_VCPKG_INTEGRATION
-        PROJECT_PATH ${SOURCE_PATH}/gsoap/VisualStudio2005/wsdl2h/wsdl2h.sln
-        PLATFORM ${BUILD_ARCH}
-        TARGET Build
-    )
-
-    file(COPY ${SOURCE_PATH}/gsoap/VisualStudio2005/soapcpp2/release/soapcpp2.exe DESTINATION ${CURRENT_PACKAGES_DIR}/tools/gsoap/)
-    file(COPY ${SOURCE_PATH}/gsoap/VisualStudio2005/wsdl2h/release/wsdl2h.exe DESTINATION ${CURRENT_PACKAGES_DIR}/tools/gsoap/)
-    file(COPY ${SOURCE_PATH}/gsoap/VisualStudio2005/soapcpp2/debug/soapcpp2.exe DESTINATION ${CURRENT_PACKAGES_DIR}/debug/tools/gsoap/)
-    file(COPY ${SOURCE_PATH}/gsoap/VisualStudio2005/wsdl2h/debug/wsdl2h.exe DESTINATION ${CURRENT_PACKAGES_DIR}/debug/tools/gsoap/)
-else()
-    message(FATAL_ERROR "Sorry but gsoap only can be build in Windows temporary")
-endif()
+file(INSTALL ${CURRENT_BUILDTREES_DIR}/license.txt DESTINATION ${CURRENT_PACKAGES_DIR}/share/gsoap RENAME copyright)
 
 
-file(MAKE_DIRECTORY ${CURRENT_PACKAGES_DIR}/include)
-file(COPY ${SOURCE_PATH}/gsoap/stdsoap2.h ${SOURCE_PATH}/gsoap/stdsoap2.c ${SOURCE_PATH}/gsoap/stdsoap2.cpp ${SOURCE_PATH}/gsoap/dom.c ${SOURCE_PATH}/gsoap/dom.cpp DESTINATION ${CURRENT_PACKAGES_DIR}/include)
 
-# Handle import files
-file(COPY ${SOURCE_PATH}/gsoap/import DESTINATION ${CURRENT_PACKAGES_DIR}/share/gsoap)
+# Common Ambient Variables:
+#   CURRENT_BUILDTREES_DIR    = ${VCPKG_ROOT_DIR}\buildtrees\${PORT}
+#   CURRENT_PACKAGES_DIR      = ${VCPKG_ROOT_DIR}\packages\${PORT}_${TARGET_TRIPLET}
+#   CURRENT_PORT_DIR          = ${VCPKG_ROOT_DIR}\ports\${PORT}
+#   PORT                      = current port name (zlib, etc)
+#   TARGET_TRIPLET            = current triplet (x86-windows, x64-windows-static, etc)
+#   VCPKG_CRT_LINKAGE         = C runtime linkage type (static, dynamic)
+#   VCPKG_LIBRARY_LINKAGE     = target library linkage type (static, dynamic)
+#   VCPKG_ROOT_DIR            = <C:\path\to\current\vcpkg>
+#   VCPKG_TARGET_ARCHITECTURE = target architecture (x64, x86, arm)
+#
 
-# Handle plugin files
-file(COPY ${SOURCE_PATH}/gsoap/plugin DESTINATION ${CURRENT_PACKAGES_DIR}/share/gsoap)
+#include(vcpkg_common_functions)
+#set(SOURCE_PATH ${CURRENT_BUILDTREES_DIR}/src/gsoap_2.7.13)
+#vcpkg_download_distfile(ARCHIVE
+    #URLS "https://sourceforge.net/projects/gsoap2/files/gsoap-2.7/gsoap_2.7.13.zip/download"
+    #FILENAME "gsoap_2.7.13.zip"
+    #SHA512  9d10fde082ac1b20cbf0713f813d118e60bc5b3a9136d99915959a06c8e67aa9983524c0c18a26fc0430a63d82c5c5d83717f8437c1433c2068f2ee34de40ccf
+#)
+#vcpkg_extract_source_archive(${ARCHIVE})
 
-# Handle copyright
-file(COPY ${SOURCE_PATH}/LICENSE.txt ${SOURCE_PATH}/INSTALL.txt ${SOURCE_PATH}/README.txt DESTINATION ${CURRENT_PACKAGES_DIR}/share/gsoap)
-file(RENAME ${CURRENT_PACKAGES_DIR}/share/gsoap/LICENSE.txt ${CURRENT_PACKAGES_DIR}/share/gsoap/copyright)
-file(RENAME ${CURRENT_PACKAGES_DIR}/share/gsoap/INSTALL.txt ${CURRENT_PACKAGES_DIR}/share/gsoap/install)
-file(RENAME ${CURRENT_PACKAGES_DIR}/share/gsoap/README.txt ${CURRENT_PACKAGES_DIR}/share/gsoap/readme)
+#file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/include ${CURRENT_PACKAGES_DIR}/src)
 
-vcpkg_copy_pdbs()
+#file(COPY ${CURRENT_BUILDTREES_DIR}/src/gsoap-2.7/gsoap/stdsoap2.h DESTINATION ${CURRENT_PACKAGES_DIR}/include/gsoap)
+
+#file(INSTALL ${CURRENT_BUILDTREES_DIR}/src/gsoap-2.7/license.txt DESTINATION ${CURRENT_PACKAGES_DIR}/share/gsoap RENAME copyright)
+
