@@ -1,0 +1,3 @@
+Source: bugtrap
+Version: 1.4.9
+Description:  Catch unhandled exceptions in unmanaged and managed .NET code.
