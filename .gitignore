@@ -10,8 +10,6 @@
 *.user
 *.userosscache
 *.sln.docstates
-/vcpkg.json
-/vcpkg-configuration.json
 
 # fuzzing
 sync_dir*
@@ -33,6 +31,7 @@ bld/
 # Ignore the executable
 /vcpkg
 /vcpkg.exe
+/vcpkg_installed
 
 # Visual Studio 2015 cache/options directory
 .vs/
@@ -322,3 +321,9 @@ prefab/
 pythonenv3.8/
 .venv/
 
+###################
+# hpcc
+###################
+
+/dist
+/.env
