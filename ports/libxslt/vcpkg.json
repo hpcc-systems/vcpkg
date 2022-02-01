@@ -9,5 +9,22 @@
   "dependencies": [
     "liblzma",
     "libxml2"
-  ]
+  ],
+  "default-features": [
+    "crypto"
+  ],
+  "features": {
+    "python": {
+      "description": "Builds with python support (--with-python), !windows"
+    },
+    "plugins": {
+      "description": "Build with plugins (--with-plugins), !windows"
+    },
+    "crypto": {
+      "description": "Build with crypto support (--with-crypto), !windows",
+      "dependencies": [
+        "libgcrypt"
+      ]
+    }
+  }
 }
