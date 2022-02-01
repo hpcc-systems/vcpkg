@@ -1,0 +1,61 @@
+{
+    "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
+    "name": "hpcc-platform",
+    "version": "8.6.0",
+    "dependencies": [
+        "apr",
+        "apr-util",
+        {
+            "name": "aws-sdk-cpp",
+            "default-features": false,
+            "features": [
+                "s3",
+                "sqs"
+            ]
+        },
+        "azure-storage-cpp",
+        "boost-property-tree",
+        "boost-regex",
+        "curl",
+        "hiredis",
+        "h3",
+        "icu",
+        {
+            "name": "libarchive",
+            "default-features": false,
+            "features": [
+                "bzip2"
+            ]
+        },
+        "jwt-cpp",
+        "libgit2",
+        {
+            "name": "libiconv",
+            "platform": "osx"
+        },
+        {
+            "name": "libmysql",
+            "platform": "!(windows & x86)"
+        },
+        "librdkafka",
+        "libuv",
+        "libxml2",
+        {
+            "name": "libxslt",
+            "default-features": false,
+            "features": []
+        },
+        "libyaml",
+        "lz4",
+        "openblas",
+        "openssl",
+        "python3",
+        "rapidjson",
+        "tbb",
+        {
+            "name": "winflexbison",
+            "platform": "windows"
+        },
+        "zlib"
+    ]
+}
