@@ -12,7 +12,14 @@ jobs:
   build-images:
     strategy:
       matrix:
-        image: ["ubuntu-22.04"]
+        image:
+          [
+            "ubuntu-22.04",
+            "ubuntu-20.04",
+            "ubuntu-18.04",
+            "centos-8",
+            "centos-7",
+          ]
       fail-fast: false
 
     name: "${{ matrix.image }}"

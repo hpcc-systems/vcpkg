@@ -18,6 +18,6 @@ vcpkg_configure_make(
 )
 vcpkg_install_make()
 
-file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug")
+file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/share")
    
 file(INSTALL "${SOURCE_PATH}/COPYING" DESTINATION "${CURRENT_PACKAGES_DIR}/share/libmemcached" RENAME copyright)

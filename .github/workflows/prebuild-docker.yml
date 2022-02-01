@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - "hpcc-platform-8.12.x"
+      - "TEST"
 
   workflow_dispatch:
     inputs:
@@ -19,7 +20,14 @@ jobs:
   build-images:
     strategy:
       matrix:
-        image: ["ubuntu-22.04"]
+        image:
+          [
+            "ubuntu-22.04",
+            "ubuntu-20.04",
+            "ubuntu-18.04",
+            "centos-8",
+            "centos-7",
+          ]
       fail-fast: false
 
     name: "Docker:  ${{ matrix.image }}"
