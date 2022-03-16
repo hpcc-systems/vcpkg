@@ -8,6 +8,8 @@ on:
     branches:
       - "test-*"
       - "hpcc-platform-*"
+  schedule:
+      - cron: '0 5 * * *' # Once per day at 5am
 
 jobs:
   build:
