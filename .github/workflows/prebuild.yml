@@ -9,7 +9,7 @@ on:
       - "test-*"
       - "hpcc-platform-*"
   schedule:
-      - cron: '0 5 * * *' # Once per day at 5am
+    - cron: "0 0 * * *" # Once per day at midnight
 
 jobs:
   build:
@@ -69,7 +69,8 @@ jobs:
         if: ${{ matrix.os == 'ubuntu-20.04' }}
         shell: "bash"
         run: |
-          sudo apt-get -yq install automake libtool
+          sudo apt-get update -y
+          sudo apt-get -yq install build-essential binutils-dev pkg-config libtool autotools-dev automake
 
       - name: OSX Dependencies
         if: ${{ matrix.os == 'macos-11' }}
