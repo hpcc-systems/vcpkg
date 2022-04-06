@@ -37,6 +37,7 @@
             "name": "libmysql",
             "platform": "!(windows & x86)"
         },
-        "librdkafka"
+        "librdkafka",
+        "openblas"
     ]
 }

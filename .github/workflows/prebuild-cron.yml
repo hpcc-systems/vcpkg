@@ -4,10 +4,8 @@ env:
   VCPKG_BINARY_SOURCES: "clear;nuget,GitHub,readwrite"
 
 on:
-  push:
-    branches:
-      - "test-*"
-      - "hpcc-platform-*"
+  schedule:
+    - cron: "30 5,12,18 * * *"
 
 jobs:
   build:
