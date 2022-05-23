@@ -1,6 +1,6 @@
 # vcpkg
 
-This repository is a fork of https://github.com/hpcc-systems/vcpkg.  
+This repository is a fork of https://github.com/microsoft/vcpkg.  
 
 The default branch is "main" which is empty except for a github action that prebuilds various ports for the [HPCC-Platform](https://github.com/hpcc-systems/HPCC-Platform) repository.
 
