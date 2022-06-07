@@ -1,7 +1,7 @@
 {
     "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
     "name": "hpcc-platform",
-    "version": "8.6.0",
+    "version": "8.8.0",
     "dependencies": [
         "apr",
         "apr-util",
@@ -13,7 +13,7 @@
                 "sqs"
             ]
         },
-        "azure-storage-cpp",
+        "azure-storage-blobs-cpp",
         "boost-property-tree",
         "boost-regex",
         "curl",
