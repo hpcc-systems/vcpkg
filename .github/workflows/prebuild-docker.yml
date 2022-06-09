@@ -1,0 +1,51 @@
+name: Refresh docker NuGet cache
+
+on:
+  push:
+    branches:
+      - "main"
+
+  pull_request:
+    branches:
+      - "main"
+
+  schedule:
+    - cron: "0 * * * *"
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        branch: ["8.8.x", "8.6.x"]
+      fail-fast: false
+
+    name: "${{ matrix.branch }}"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@v3
+
+      - name: "Build dockerfile"
+        working-directory: .
+        shell: "bash"
+        run: |
+          docker build --pull --rm -f "dockerfiles/hpcc-prebuild/Dockerfile" -t vcpkg:latest "dockerfiles/hpcc-prebuild" \
+          --build-arg BUILD_BRANCH=hpcc-platform-${{ matrix.branch }} \
+          --build-arg REPO_OWNER=${{ github.repository_owner }} \
+          --build-arg BUILD_TOKEN=${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Refresh cache 8.8.x"
+        if: ${{ matrix.branch == '8.8.x' }}
+        working-directory: .
+        shell: "bash"
+        run: |
+          docker run --rm vcpkg:latest
+
+      - name: "Refresh cache 8.6.x"
+        if: ${{ matrix.branch == '8.6.x' }}
+        working-directory: .
+        shell: "bash"
+        run: |
+          docker run --rm vcpkg:latest ./vcpkg install

@@ -139,7 +139,7 @@ jobs:
             -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
 
       - name: "Update nuget (overlays)"
-        if: ${{ matrix.branch != '8.6.x' }}
+        if: ${{ matrix.branch == '8.8.x' }}
         shell: "bash"
         run: |
           ./vcpkg install --overlay-ports=./overlays --keep-going --triplet ${{ matrix.triplet }}
