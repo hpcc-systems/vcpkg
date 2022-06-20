@@ -19,6 +19,7 @@ jobs:
     strategy:
       matrix:
         branch: ["8.8.x", "8.6.x"]
+        image: ["ubuntu", "centos"]
       fail-fast: false
 
     name: "${{ matrix.branch }}"
@@ -31,7 +32,7 @@ jobs:
         working-directory: .
         shell: "bash"
         run: |
-          docker build --pull --rm -f "dockerfiles/hpcc-prebuild/Dockerfile" -t vcpkg:latest "dockerfiles/hpcc-prebuild" \
+          docker build --pull --rm -f "dockerfiles/hpcc-prebuild/${{ matrix.image }}.dockerfile" -t vcpkg-${{ matrix.image }}:latest "dockerfiles/hpcc-prebuild" \
           --build-arg BUILD_BRANCH=hpcc-platform-${{ matrix.branch }} \
           --build-arg REPO_OWNER=${{ github.repository_owner }} \
           --build-arg BUILD_TOKEN=${{ secrets.GITHUB_TOKEN }}
@@ -41,11 +42,11 @@ jobs:
         working-directory: .
         shell: "bash"
         run: |
-          docker run --rm vcpkg:latest
+          docker run --rm vcpkg-${{ matrix.image }}:latest
 
       - name: "Refresh cache 8.6.x"
         if: ${{ matrix.branch == '8.6.x' }}
         working-directory: .
         shell: "bash"
         run: |
-          docker run --rm vcpkg:latest ./vcpkg install
+          docker run --rm vcpkg-${{ matrix.image }}:latest ./vcpkg install
