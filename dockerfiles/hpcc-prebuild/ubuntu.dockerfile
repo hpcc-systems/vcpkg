@@ -1,6 +1,6 @@
 ##############################################################################
 #
-#    HPCC SYSTEMS software Copyright (C) 2020 HPCC Systems®.
+#    HPCC SYSTEMS software Copyright (C) 2022 HPCC Systems®.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ RUN echo REPO_OWNER is ${REPO_OWNER}
 RUN echo BUILD_BRANCH is ${BUILD_BRANCH}
 
 ENV VCPKG_BINARY_SOURCES="clear;nuget,GitHub,readwrite"
-ENV VCPKG_NUGET_REPOSITORY=https://github.com/hpcc-systems/vcpkg
+ENV VCPKG_NUGET_REPOSITORY=https://github.com/${REPO_OWNER}/vcpkg
 
 WORKDIR /hpcc-dev
 
@@ -61,4 +61,4 @@ RUN mono `./vcpkg fetch nuget | tail -n 1` \
     setapikey "${BUILD_TOKEN}" \
     -source "https://nuget.pkg.github.com/${REPO_OWNER}/index.json"
 
-CMD ["./vcpkg", "install", "--overlay-ports=./overlays"]
+CMD ./vcpkg install --overlay-ports=./overlays
