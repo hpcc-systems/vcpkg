@@ -10,9 +10,26 @@ on:
       - "main"
 
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "0 0,6,12,18 * * *"
 
   workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch"
+        required: true
+        default: "8.8.x"
+        type: choice
+        options:
+          - "8.8.x"
+          - "8.6.x"
+      image:
+        description: "Image"
+        required: true
+        default: "ubuntu"
+        type: choice
+        options:
+          - "ubuntu"
+          - "centos"
 
 jobs:
   build:
@@ -37,16 +54,8 @@ jobs:
           --build-arg REPO_OWNER=${{ github.repository_owner }} \
           --build-arg BUILD_TOKEN=${{ secrets.GITHUB_TOKEN }}
 
-      - name: "Refresh cache 8.8.x"
-        if: ${{ matrix.branch == '8.8.x' }}
+      - name: "Refresh cache"
         working-directory: .
         shell: "bash"
         run: |
           docker run --rm vcpkg-${{ matrix.image }}:latest
-
-      - name: "Refresh cache 8.6.x"
-        if: ${{ matrix.image == "ubuntu" && matrix.branch == '8.6.x' }}
-        working-directory: .
-        shell: "bash"
-        run: |
-          docker run --rm vcpkg-${{ matrix.image }}:latest  bash -c "./vcpkg install"

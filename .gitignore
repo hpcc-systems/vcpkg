@@ -1,7 +1,10 @@
 /buildtrees
+/dist
 /downloads
+/node_modules
 /packages
 /vcpkg-cache
 /vcpkg_installed
 /vcpkg.exe
 /vcpkg
+/.env

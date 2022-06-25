@@ -12,12 +12,33 @@ on:
     - cron: "0 0,6,12,18 * * *"
 
   workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch"
+        required: true
+        default: "8.8.x"
+        type: choice
+        options:
+          - "8.8.x"
+          - "8.6.x"
+      os:
+        description: "OS"
+        required: true
+        default: "ubuntu-20.04"
+        type: choice
+        options:
+          - "ubuntu-20.04"
+          - "ubuntu-22.04"
+          - "windows-2019"
+          - "windows-2022"
+          - "macos-11"
+          - "macos-12"
 
 jobs:
   build:
     strategy:
       matrix:
-        branch: ["2022.06.15", "8.8.x", "8.6.x"]
+        branch: ["8.8.x", "8.6.x"]
         label:
           [
             "ubuntu-20.04-x64",
@@ -139,13 +160,6 @@ jobs:
             -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
 
       - name: "Update nuget (overlays)"
-        if: ${{ matrix.branch == '8.8.x' }}
         shell: "bash"
         run: |
-          ./vcpkg install --overlay-ports=./overlays --keep-going --triplet ${{ matrix.triplet }}
-
-      - name: "Update nuget"
-        if: ${{ matrix.branch == '8.6.x' }}
-        shell: "bash"
-        run: |
-          ./vcpkg install --keep-going --triplet ${{ matrix.triplet }}
+          ./vcpkg install --overlay-ports=overlays --keep-going --triplet ${{ matrix.triplet }}
