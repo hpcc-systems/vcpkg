@@ -49,7 +49,10 @@
         "lz4",
         "openblas",
         "openssl",
-        "python3",
+        {
+            "name": "python3",
+            "platform": "windows"
+        },
         "rapidjson",
         "tbb",
         {
