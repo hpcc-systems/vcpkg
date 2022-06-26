@@ -6,7 +6,6 @@ env:
 on:
   push:
     branches:
-      - "test-*"
       - "hpcc-platform-*"
 
 jobs:
@@ -67,6 +66,7 @@ jobs:
         if: ${{ matrix.os == 'ubuntu-20.04' }}
         shell: "bash"
         run: |
+          sudo apt-get update -y
           sudo apt-get -yq install automake libtool
 
       - name: OSX Dependencies
@@ -107,8 +107,8 @@ jobs:
             setapikey "${{ secrets.GITHUB_TOKEN }}" \
             -source "https://nuget.pkg.github.com/hpcc-systems/index.json"
 
-      - name: "vcpkg package refresh"
+      - name: "Update nuget (with overlays)"
         working-directory: .
         shell: "bash"
         run: |
-          ./vcpkg install --keep-going --triplet ${{ matrix.triplet }}
+          ./vcpkg install --overlay-ports=./overlays --keep-going --triplet ${{ matrix.triplet }}
