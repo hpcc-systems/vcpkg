@@ -14,6 +14,7 @@
             ]
         },
         "azure-storage-blobs-cpp",
+        "azure-storage-files-shares-cpp",
         "boost-property-tree",
         "boost-regex",
         "curl",
@@ -47,6 +48,7 @@
         },
         "libyaml",
         "lz4",
+        "nlohmann-json",
         "openblas",
         "openssl",
         {
