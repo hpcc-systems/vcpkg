@@ -17,10 +17,17 @@
         "azure-storage-files-shares-cpp",
         "boost-property-tree",
         "boost-regex",
+        "cpr",
         "curl",
-        "hiredis",
+        {
+            "name": "elasticlient",
+            "platform": "!windows"
+        },
         "h3",
+        "hiredis",
         "icu",
+        "jsoncpp",
+        "jwt-cpp",
         {
             "name": "libarchive",
             "default-features": false,
@@ -28,7 +35,6 @@
                 "bzip2"
             ]
         },
-        "jwt-cpp",
         "libgit2",
         {
             "name": "libiconv",
