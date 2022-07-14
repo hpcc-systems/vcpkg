@@ -56,7 +56,21 @@
         "libyaml",
         "lz4",
         "nlohmann-json",
-        "openblas",
+        {
+            "name": "openblas",
+            "features":[
+                "dynamic-arch",
+                "threads"
+            ],
+	    "platform": "!windows"
+        },
+        {
+            "name": "openblas",
+            "features":[
+                "threads"
+            ],
+	    "platform": "windows"
+        },
         "openssl",
         {
             "name": "python3",
