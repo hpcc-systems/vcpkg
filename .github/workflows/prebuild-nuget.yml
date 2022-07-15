@@ -27,6 +27,7 @@ on:
         default: "ubuntu-20.04"
         type: choice
         options:
+          - "ubuntu-18.04"
           - "ubuntu-20.04"
           - "ubuntu-22.04"
           - "windows-2019"
@@ -41,6 +42,7 @@ jobs:
         branch: ["8.8.x", "8.6.x"]
         label:
           [
+            "ubuntu-18.04-x64",
             "ubuntu-20.04-x64",
             "ubuntu-22.04-x64",
             "windows-2019-x64",
@@ -51,74 +53,71 @@ jobs:
             "macos-12-x64",
           ]
         include:
+          - label: "ubuntu-18.04-x64"
+            os: "ubuntu-18.04"
+            triplet: "x64-linux"
+            mono: "mono"
+            sudo: "sudo"
           - label: "ubuntu-20.04-x64"
             os: "ubuntu-20.04"
             triplet: "x64-linux"
             mono: "mono"
             sudo: "sudo"
-            cmake_config_options: ""
           - label: "ubuntu-22.04-x64"
             os: "ubuntu-22.04"
             triplet: "x64-linux"
             mono: "mono"
             sudo: "sudo"
-            cmake_config_options: ""
           - label: "windows-2019-x64"
             os: "windows-2019"
             triplet: "x64-windows"
             mono: ""
             sudo: ""
-            cmake_config_options: '-G "Visual Studio 16 2019" -T host=x64 -A x64'
           - label: "windows-2019-x86"
             os: "windows-2019"
             triplet: "x86-windows"
             mono: ""
             sudo: ""
-            cmake_config_options: '-G "Visual Studio 16 2019" -T host=x86 -A x86'
           - label: "windows-2022-x64"
             os: "windows-2022"
             triplet: "x64-windows"
             mono: ""
             sudo: ""
-            cmake_config_options: '-G "Visual Studio 17 2022" -T host=x64 -A x64'
           - label: "windows-2022-x86"
             os: "windows-2022"
             triplet: "x86-windows"
             mono: ""
             sudo: ""
-            cmake_config_options: '-G "Visual Studio 17 2022" -T host=x86 -A x86'
           - label: "macos-11-x64"
             os: "macos-11"
             triplet: "x64-osx"
             mono: "mono"
             sudo: "sudo"
-            cmake_config_options: ""
           - label: "macos-12-x64"
             os: "macos-12"
             triplet: "x64-osx"
             mono: "mono"
             sudo: "sudo"
-            cmake_config_options: ""
       fail-fast: false
 
     name: "${{ matrix.label }} - ${{ matrix.branch }}"
     runs-on: ${{ matrix.os }}
     steps:
       - name: Ubuntu Dependencies
-        if: ${{ matrix.os == 'ubuntu-20.04' || matrix.os == 'ubuntu-22.04' }}
+        if: ${{ matrix.os == 'ubuntu-18.04' || matrix.os == 'ubuntu-20.04' || matrix.os == 'ubuntu-22.04' }}
         shell: "bash"
         run: |
           sudo apt-get update -y
           sudo apt-get -yq install build-essential binutils-dev pkg-config libtool autotools-dev automake
 
-      - name: Ubuntu-22.04 Mono Dependencies
+      - name: Ubuntu Mono Dependencies
         if: ${{ matrix.os == 'ubuntu-22.04' }}
         shell: "bash"
         run: |
           sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
           echo "deb https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
           sudo apt-get update -y
-          sudo apt-get -yq install mono-complete
+          sudo apt-get -yq install -f mono-complete
 
       - name: OSX Dependencies
         if: ${{ matrix.os == 'macos-11' || matrix.os == 'macos-12'}}
