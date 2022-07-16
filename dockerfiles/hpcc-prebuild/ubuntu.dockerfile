@@ -27,38 +27,34 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update
 RUN apt-get install -y dirmngr gnupg apt-transport-https ca-certificates software-properties-common
+
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
 RUN apt-add-repository 'deb https://download.mono-project.com/repo/ubuntu stable-focal main'
-RUN apt install -y mono-complete 
-
-ARG REPO_OWNER=hpcc-systems
-ARG BUILD_BRANCH=hpcc-platform-8.8.x
-ARG BUILD_TOKEN=none
-RUN echo REPO_OWNER is ${REPO_OWNER}
-RUN echo BUILD_BRANCH is ${BUILD_BRANCH}
-
-ENV VCPKG_BINARY_SOURCES="clear;nuget,GitHub,readwrite"
-ENV VCPKG_NUGET_REPOSITORY=https://github.com/${REPO_OWNER}/vcpkg
+RUN apt-get install -y mono-complete 
 
 WORKDIR /hpcc-dev
 
-RUN git clone https://github.com/${REPO_OWNER}/vcpkg.git
+RUN git clone -n https://github.com/hpcc-systems/vcpkg.git
 
 WORKDIR /hpcc-dev/vcpkg
 
+ARG BUILD_BRANCH=hpcc-platform-8.8.x
 RUN git checkout ${BUILD_BRANCH}
 
 RUN ./bootstrap-vcpkg.sh
 
+ENV VCPKG_BINARY_SOURCES="clear;nuget,GitHub,readwrite"
+ENV VCPKG_NUGET_REPOSITORY=https://github.com/hpcc-systems/vcpkg
+
 RUN mono `./vcpkg fetch nuget | tail -n 1` \
     sources add \
-    -source "https://nuget.pkg.github.com/${REPO_OWNER}/index.json" \
+    -source "https://nuget.pkg.github.com/hpcc-systems/index.json" \
     -storepasswordincleartext \
     -name "GitHub" \
-    -username "${REPO_OWNER}" \
-    -password "${BUILD_TOKEN}"
+    -username "${GITHUB_ACTOR}" \
+    -password "${GITHUB_TOKEN}"
 RUN mono `./vcpkg fetch nuget | tail -n 1` \
-    setapikey "${BUILD_TOKEN}" \
-    -source "https://nuget.pkg.github.com/${REPO_OWNER}/index.json"
+    setapikey "${GITHUB_TOKEN}" \
+    -source "https://nuget.pkg.github.com/hpcc-systems/index.json"
 
-CMD ./vcpkg install --overlay-ports=./overlays
+CMD ./vcpkg install --clean-after-build --overlay-ports=./overlays

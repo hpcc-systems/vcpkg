@@ -10,7 +10,7 @@ on:
       - "main"
 
   schedule:
-    - cron: "0 0,6,12,18 * * *"
+    - cron: "0 3 * * *"
 
   workflow_dispatch:
     inputs:
@@ -36,7 +36,14 @@ jobs:
     strategy:
       matrix:
         branch: ["8.8.x", "8.6.x"]
-        image: ["ubuntu", "centos"]
+        image:
+          [
+            "ubuntu-18.04",
+            "ubuntu-20.04",
+            "ubuntu-22.04",
+            "centos-7",
+            "centos-8",
+          ]
       fail-fast: false
 
     name: "${{ matrix.image }}-${{ matrix.branch }}"
@@ -49,13 +56,8 @@ jobs:
         working-directory: .
         shell: "bash"
         run: |
-          docker build --pull --rm -f "dockerfiles/hpcc-prebuild/${{ matrix.image }}.dockerfile" -t vcpkg-${{ matrix.image }}:latest "dockerfiles/hpcc-prebuild" \
-          --build-arg BUILD_BRANCH=hpcc-platform-${{ matrix.branch }} \
-          --build-arg REPO_OWNER=${{ github.repository_owner }} \
-          --build-arg BUILD_TOKEN=${{ secrets.GITHUB_TOKEN }}
-
-      - name: "Refresh cache"
-        working-directory: .
-        shell: "bash"
-        run: |
-          docker run --rm vcpkg-${{ matrix.image }}:latest
+          GITHUB_BRANCH=$(git ls-remote https://github.com/hpcc-systems/vcpkg refs/heads/hpcc-platform-${{ matrix.branch }} | cut -f 1)
+          docker build --pull --rm -f "dockerfiles/${{ matrix.image }}.dockerfile" -t vcpkg-${{ matrix.image }}:$GITHUB_BRANCH "dockerfiles/hpcc-prebuild" \
+          --build-arg BUILD_BRANCH=$GITHUB_BRANCH \
+          --build-arg GITHUB_ACTOR=${{ github.actor }} \
+          --build-arg GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
