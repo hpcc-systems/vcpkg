@@ -16,7 +16,7 @@ RUN yum -y install https://packages.endpointdev.com/rhel/7/os/x86_64/endpoint-re
 RUN yum install -y mono-complete 
 
 # Build Tools  ---
-RUN yum install -y git curl zip unzip tar
+RUN yum install -y git curl zip unzip tar python3 libtool autoconf automake
 RUN yum group install -y "Development Tools"
 RUN yum install -y centos-release-scl
 RUN yum install -y devtoolset-9

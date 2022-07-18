@@ -18,7 +18,7 @@ RUN dnf config-manager --add-repo https://download.mono-project.com/repo/centos8
 RUN dnf install -y mono-complete 
 
 # Build Tools  ---
-RUN yum install -y git curl zip unzip tar
+RUN yum install -y git curl zip unzip tar python3 libtool autoconf automake
 RUN yum group install -y "Development Tools"
 RUN dnf -y install gcc-toolset-9-gcc gcc-toolset-9-gcc-c++
 
