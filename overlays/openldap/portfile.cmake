@@ -18,19 +18,18 @@ else()
     set(BUILD_OPTS --enable-shared=no --enable-static=yes)
 endif()
 
-execute_process(COMMAND bash "-c" "awk -F= '/^NAME/{print $2}' \"/etc/os-release\""
-    OUTPUT_VARIABLE OS_RELEASE
-    ERROR_VARIABLE OS_RELEASE_ERROR
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-message("OS_RELEASE: ${OS_RELEASE} (${OS_RELEASE_ERROR})")
+# execute_process(COMMAND bash "-c" "awk -F= '/^NAME/{print $2}' \"/etc/os-release\""
+# OUTPUT_VARIABLE OS_RELEASE
+# ERROR_VARIABLE OS_RELEASE_ERROR
+# OUTPUT_STRIP_TRAILING_WHITESPACE
+# )
+# message("OS_RELEASE: ${OS_RELEASE} (${OS_RELEASE_ERROR})")
 
-if(OS_RELEASE STREQUAL "\"CentOS Linux\"")
-    set(LDFLAGS "LDFLAGS=-ldl")
-else()
-    set(LDFLAGS "LDFLAGS=-Wl,--no-as-needed")
-endif()
-
+# if(OS_RELEASE STREQUAL "\"CentOS Linux\"")
+# set(LDFLAGS "LDFLAGS=-ldl")
+# else()
+# set(LDFLAGS "LDFLAGS=-ldl")
+# endif()
 vcpkg_configure_make(
     SOURCE_PATH "${SOURCE_PATH}"
     AUTOCONFIG
@@ -38,9 +37,10 @@ vcpkg_configure_make(
     # PRERUN_SHELL autoreconf --force --install
     OPTIONS
     ${BUILD_OPTS}
+    --disable-slapd
     --with-tls=openssl
     --without-cyrus-sasl
-    ${LDFLAGS}
+    "LIBS=-ldl"
 
     # --enable-slapd
     # --enable-modules
