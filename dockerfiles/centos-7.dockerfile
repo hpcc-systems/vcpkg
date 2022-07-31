@@ -38,15 +38,15 @@ ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
 ENV ACLOCAL_PATH=/usr/local/share/aclocal:$ACLOCAL_PATH
 
 # Libraries  ---
-RUN yum install -y ncurses-devel
 
 WORKDIR /hpcc-dev
 
-RUN git clone -n https://github.com/hpcc-systems/vcpkg.git
+ARG GITHUB_OWNER=hpcc-systems
+ARG GITHUB_REF=hpcc-platform-8.8.x
+RUN git clone -n https://github.com/${GITHUB_OWNER}/vcpkg.git
 
 WORKDIR /hpcc-dev/vcpkg
-ARG BUILD_BRANCH=hpcc-platform-8.8.x
-RUN git checkout ${BUILD_BRANCH}
+RUN git checkout ${GITHUB_REF}
 RUN /hpcc-dev/vcpkg/bootstrap-vcpkg.sh
 
 ARG GITHUB_ACTOR=hpcc-systems

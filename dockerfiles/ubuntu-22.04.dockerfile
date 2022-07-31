@@ -17,15 +17,16 @@ RUN apt install -y git curl zip unzip tar
 RUN apt install -y build-essential autoconf libtool
 
 # Libraries  ---
-RUN apt install -y libncurses-dev
+RUN apt install -y groff-base
 
 WORKDIR /hpcc-dev
 
-RUN git clone -n https://github.com/hpcc-systems/vcpkg.git
+ARG GITHUB_OWNER=hpcc-systems
+ARG GITHUB_REF=hpcc-platform-8.8.x
+RUN git clone -n https://github.com/${GITHUB_OWNER}/vcpkg.git
 
 WORKDIR /hpcc-dev/vcpkg
-ARG BUILD_BRANCH=hpcc-platform-8.8.x
-RUN git checkout ${BUILD_BRANCH}
+RUN git checkout ${GITHUB_REF}
 RUN /hpcc-dev/vcpkg/bootstrap-vcpkg.sh
 
 ARG GITHUB_ACTOR=hpcc-systems
