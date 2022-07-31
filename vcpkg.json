@@ -56,7 +56,6 @@
         "libyaml",
         "lz4",
         "nlohmann-json",
-        "ncurses",
         {
             "name": "openblas",
             "features": [
