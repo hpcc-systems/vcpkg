@@ -1,0 +1,14 @@
+{
+  "name": "openldap",
+  "version-string": "2.5.13",
+  "homepage": "https://www.openldap.org/software/",
+  "description": "OpenLDAP Software is an open source implementation of the Lightweight Directory Access Protocol.",
+  "supports": "!windows",
+  "dependencies": [
+    "openssl",
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    }
+  ]
+}
