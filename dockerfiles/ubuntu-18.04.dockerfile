@@ -1,8 +1,6 @@
 FROM ubuntu:18.04 AS BASE_OS
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV VCPKG_BINARY_SOURCES="clear;nuget,GitHub,readwrite"
-ENV VCPKG_NUGET_REPOSITORY=https://github.com/hpcc-systems/vcpkg
 
 # Build Tools - Mono  ---
 RUN apt update
@@ -19,42 +17,40 @@ RUN apt install -y build-essential autoconf libtool
 # Libraries  ---
 RUN apt install -y groff-base
 
-WORKDIR /hpcc-dev
+WORKDIR /hpcc-dev/HPCC-Platform
 
 ARG GITHUB_OWNER=hpcc-systems
 ARG GITHUB_REF=hpcc-platform-8.8.x
 RUN git clone -n https://github.com/${GITHUB_OWNER}/vcpkg.git
 
-WORKDIR /hpcc-dev/vcpkg
+WORKDIR /hpcc-dev/HPCC-Platform/vcpkg
 RUN git checkout ${GITHUB_REF}
-RUN /hpcc-dev/vcpkg/bootstrap-vcpkg.sh
+RUN /hpcc-dev/HPCC-Platform/vcpkg/bootstrap-vcpkg.sh
+
+ENV VCPKG_BINARY_SOURCES="clear;nuget,GitHub,readwrite"
+ENV VCPKG_NUGET_REPOSITORY=https://github.com/hpcc-systems/vcpkg
 
 ARG GITHUB_ACTOR=hpcc-systems
 ARG GITHUB_TOKEN=none
-RUN mono `/hpcc-dev/vcpkg/vcpkg fetch nuget | tail -n 1` \
+RUN mono `./vcpkg fetch nuget | tail -n 1` \
     sources add \
     -name "GitHub" \
     -source "https://nuget.pkg.github.com/hpcc-systems/index.json" \
     -storepasswordincleartext \
     -username "${GITHUB_ACTOR}" \
     -password "${GITHUB_TOKEN}"
-RUN mono `/hpcc-dev/vcpkg/vcpkg fetch nuget | tail -n 1` \
+RUN mono `./vcpkg fetch nuget | tail -n 1` \
     setapikey "${GITHUB_TOKEN}" \
     -source "https://nuget.pkg.github.com/hpcc-systems/index.json"
 
 # vcpkg  ---
-WORKDIR /hpcc-dev/build
-RUN /hpcc-dev/vcpkg/vcpkg install \
+RUN ./vcpkg install \
     --clean-after-build \
-    --overlay-ports=/hpcc-dev/vcpkg/overlays \
-    --x-manifest-root=/hpcc-dev/vcpkg \
-    --downloads-root=/hpcc-dev/build/vcpkg_downloads \
-    --x-buildtrees-root=/hpcc-dev/build/vcpkg_buildtrees \
-    --x-packages-root=/hpcc-dev/build/vcpkg_packages
+    --overlay-ports=./overlays || echo " *** vcpkg install failed ***"
 
-RUN mono `/hpcc-dev/vcpkg/vcpkg fetch nuget | tail -n 1` \
-    sources remove \
-    -name "GitHub"
+# RUN mono `/hpcc-dev/HPCC-Platform/vcpkg/vcpkg fetch nuget | tail -n 1` \
+#     sources remove \
+#     -name "GitHub"
 
-FROM ubuntu:18.04
-COPY --from=BASE_OS /hpcc-dev/build /hpcc-dev/build
+# FROM ubuntu:18.04
+# COPY --from=BASE_OS /hpcc-dev/build /hpcc-dev/build

@@ -6,7 +6,7 @@ import { Octokit, App } from "octokit";
 async function main() {
 
     // Create a personal access token at https://github.com/settings/tokens/new?scopes=repo
-    const octokit = new Octokit({ auth: process.env.GITHUB });
+    const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN_II });
 
     // Compare: https://docs.github.com/en/rest/reference/users#get-the-authenticated-user
     const {
@@ -24,7 +24,7 @@ async function main() {
         if (response.status === 200) {
             console.log(response.data.length);
             for (const pkg of response.data) {
-                if (pkg.name.indexOf("xxx") >= 0) {
+                if (pkg.name.indexOf("apr") >= 0) {
                     console.log("Deleting:  " + pkg.name);
                     octokit.request('DELETE /orgs/{org}/packages/{package_type}/{package_name}', {
                         package_type: 'nuget',
