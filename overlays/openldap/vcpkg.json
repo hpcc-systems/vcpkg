@@ -1,9 +1,10 @@
 {
   "name": "openldap",
-  "version-string": "2.5.13",
-  "homepage": "https://www.openldap.org/software/",
+  "version": "2.5.13",
   "description": "OpenLDAP Software is an open source implementation of the Lightweight Directory Access Protocol.",
-  "supports": "!windows",
+  "homepage": "https://www.openldap.org/software/",
+  "license": "OLDAP-2.8",
+  "supports": "!windows, (mingw & !x86)",
   "dependencies": [
     "openssl",
     {

@@ -1,13 +1,13 @@
 diff --git a/configure.ac b/configure.ac
-index 626d024..05e3f51 100644
+index 626d024..c1eb141 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1234,7 +1234,7 @@ if test $ol_with_tls = openssl || test $ol_with_tls = auto ; then
- 					, [AC_MSG_FAILURE([OpenSSL 1.1.1 or newer required])])
+@@ -1235,7 +1235,7 @@ if test $ol_with_tls = openssl || test $ol_with_tls = auto ; then
  
  		AC_CHECK_LIB(ssl, SSL_export_keying_material_early,
--			[have_openssl=yes], [have_openssl=no],
-+			[have_openssl=yes], [have_openssl=yes],
- 			[-lcrypto])
+ 			[have_openssl=yes], [have_openssl=no],
+-			[-lcrypto])
++			[-lcrypto -lpthread])
  
  		if test $have_openssl = yes ; then
+ 			ol_with_tls=openssl
