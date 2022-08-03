@@ -28,6 +28,12 @@ docker build --progress plain --pull --rm -f "$SCRIPT_DIR/centos-8.dockerfile" -
     --build-arg GITHUB_ACTOR=$GITHUB_ACTOR \
     --build-arg GITHUB_TOKEN=$GITHUB_TOKEN
 
+docker build --progress plain --pull --rm -f "$SCRIPT_DIR/ubuntu-hpcc.dockerfile" -t vcpkg--ubuntu-hpcc:$GITHUB_REF "$SCRIPT_DIR" \
+    --build-arg GITHUB_OWNER=$GITHUB_OWNER \
+    --build-arg GITHUB_REF=$GITHUB_REF \
+    --build-arg GITHUB_ACTOR=$GITHUB_ACTOR \
+    --build-arg GITHUB_TOKEN=$GITHUB_TOKEN
+
 docker build --progress plain --pull --rm -f "$SCRIPT_DIR/ubuntu-18.04.dockerfile" -t vcpkg-ubuntu-18.04:$GITHUB_REF "$SCRIPT_DIR" \
     --build-arg GITHUB_OWNER=$GITHUB_OWNER \
     --build-arg GITHUB_REF=$GITHUB_REF \

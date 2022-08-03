@@ -38,6 +38,7 @@ jobs:
         branch: ["8.8.x", "8.6.x"]
         image:
           [
+            "ubuntu-hpcc",
             "ubuntu-18.04",
             "ubuntu-20.04",
             "ubuntu-22.04",
@@ -56,8 +57,8 @@ jobs:
         working-directory: .
         shell: "bash"
         run: |
-          GITHUB_BRANCH=$(git ls-remote https://github.com/hpcc-systems/vcpkg refs/heads/hpcc-platform-${{ matrix.branch }} | cut -f 1)
-          docker build --pull --rm -f "dockerfiles/${{ matrix.image }}.dockerfile" -t vcpkg-${{ matrix.image }}:$GITHUB_BRANCH "dockerfiles/hpcc-prebuild" \
-          --build-arg BUILD_BRANCH=$GITHUB_BRANCH \
+          GITHUB_REF=$(git ls-remote https://github.com/hpcc-systems/vcpkg refs/heads/hpcc-platform-${{ matrix.branch }} | cut -f 1)
+          docker build --pull --rm -f "dockerfiles/${{ matrix.image }}.dockerfile" -t vcpkg-${{ matrix.image }}:$GITHUB_BRANCH "dockerfiles" \
+          --build-arg GITHUB_REF=$GITHUB_REF \
           --build-arg GITHUB_ACTOR=${{ github.actor }} \
           --build-arg GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}

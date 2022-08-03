@@ -32,29 +32,34 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E03280
 RUN apt-add-repository 'deb https://download.mono-project.com/repo/ubuntu stable-focal main'
 RUN apt-get install -y mono-complete 
 
-WORKDIR /hpcc-dev
+WORKDIR /hpcc-dev/HPCC-Platform
 
-RUN git clone -n https://github.com/hpcc-systems/vcpkg.git
+ARG GITHUB_OWNER=hpcc-systems
+ARG GITHUB_REF=hpcc-platform-8.8.x
+RUN git clone -n https://github.com/${GITHUB_OWNER}/vcpkg.git
 
-WORKDIR /hpcc-dev/vcpkg
-
-ARG BUILD_BRANCH=hpcc-platform-8.8.x
-RUN git checkout ${BUILD_BRANCH}
-
-RUN ./bootstrap-vcpkg.sh
+WORKDIR /hpcc-dev/HPCC-Platform/vcpkg
+RUN git checkout ${GITHUB_REF}
+RUN /hpcc-dev/HPCC-Platform/vcpkg/bootstrap-vcpkg.sh
 
 ENV VCPKG_BINARY_SOURCES="clear;nuget,GitHub,readwrite"
 ENV VCPKG_NUGET_REPOSITORY=https://github.com/hpcc-systems/vcpkg
 
+ARG GITHUB_ACTOR=hpcc-systems
+ARG GITHUB_TOKEN=none
 RUN mono `./vcpkg fetch nuget | tail -n 1` \
     sources add \
+    -name "GitHub" \
     -source "https://nuget.pkg.github.com/hpcc-systems/index.json" \
     -storepasswordincleartext \
-    -name "GitHub" \
     -username "${GITHUB_ACTOR}" \
     -password "${GITHUB_TOKEN}"
 RUN mono `./vcpkg fetch nuget | tail -n 1` \
     setapikey "${GITHUB_TOKEN}" \
     -source "https://nuget.pkg.github.com/hpcc-systems/index.json"
 
-CMD ./vcpkg install --clean-after-build --overlay-ports=./overlays
+# vcpkg  ---
+RUN ./vcpkg install \
+    --clean-after-build \
+    --overlay-ports=./overlays || echo " *** vcpkg install failed ***"
+
