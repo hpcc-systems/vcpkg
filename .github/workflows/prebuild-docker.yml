@@ -1,0 +1,51 @@
+name: Refresh docker NuGet cache
+
+on:
+  push:
+    tags:
+      - "*"
+    branches:
+      - "hpcc-platform-8.8.x"
+
+  workflow_call:
+    inputs:
+      branch:
+        description: "The branch to build"
+        required: true
+        type: string
+
+  workflow_dispatch:
+
+jobs:
+  build-images:
+    strategy:
+      matrix:
+        image:
+          [
+            "ubuntu-hpcc",
+            "ubuntu-18.04",
+            "ubuntu-20.04",
+            "ubuntu-22.04",
+            "centos-7",
+            "centos-8",
+          ]
+      fail-fast: false
+
+    name: "Docker:  ${{ matrix.image }}"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.branch || github.ref }}
+
+      - name: "Build dockerfile"
+        shell: "bash"
+        run: |
+          GITHUB_REF=$(git ls-remote https://github.com/${{ github.actor }}/vcpkg ${{ inputs.branch || github.ref }} | cut -f 1)
+          docker build --pull --rm -f "dockerfiles/${{ matrix.image }}.dockerfile" -t vcpkg-${{ matrix.image }}:$GITHUB_REF \
+          --build-arg GITHUB_OWNER=${{ github.actor }} \
+          --build-arg GITHUB_REF=$GITHUB_REF \
+          --build-arg GITHUB_ACTOR=${{ github.actor }} \
+          --build-arg GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
+          "./dockerfiles"
