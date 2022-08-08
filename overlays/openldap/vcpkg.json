@@ -6,10 +6,11 @@
   "license": "OLDAP-2.8",
   "supports": "!windows, (mingw & !x86)",
   "dependencies": [
-    "openssl",
-    {
-      "name": "vcpkg-cmake",
-      "host": true
+    "openssl"
+  ],
+  "features": {
+    "tools": {
+      "description": "Enable client tools"
     }
-  ]
+  }
 }
