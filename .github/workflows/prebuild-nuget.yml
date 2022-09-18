@@ -111,9 +111,10 @@ jobs:
           sudo apt-get -yq install build-essential binutils-dev pkg-config libtool autotools-dev automake
 
       - name: Ubuntu Mono Dependencies
-        if: ${{ matrix.os == 'ubuntu-22.04' }}
+        if: ${{ matrix.os.contains('ubuntu') }}
         shell: "bash"
         run: |
+          sudo apt-get -yq remove --purge mono-complete
           sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
           echo "deb https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
           sudo apt-get update -y
