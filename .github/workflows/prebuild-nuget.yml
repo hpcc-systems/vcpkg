@@ -104,20 +104,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Ubuntu Dependencies
-        if: ${{ matrix.os == 'ubuntu-18.04' || matrix.os == 'ubuntu-20.04' || matrix.os == 'ubuntu-22.04' }}
+        if: ${{ contains(matrix.os, 'ubuntu') }}
         shell: "bash"
         run: |
           sudo apt-get update -y
           sudo apt-get -yq install build-essential binutils-dev pkg-config libtool autotools-dev automake
-
-      - name: Ubuntu Mono Dependencies
-        if: ${{ matrix.os == 'ubuntu-22.04' }}
-        shell: "bash"
-        run: |
-          sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-          echo "deb https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
-          sudo apt-get update -y
-          sudo apt-get -yq install -f mono-complete
 
       - name: OSX Dependencies
         if: ${{ matrix.os == 'macos-11' || matrix.os == 'macos-12'}}
@@ -125,40 +116,34 @@ jobs:
         run: |
           brew install pkg-config automake libtool
 
-      - name: "Remove builtin vcpkg (old)"
-        working-directory: .
-        shell: "bash"
-        run: |
-          ${{ matrix.sudo }} rm -rf "$VCPKG_INSTALLATION_ROOT"
-
       - name: Check out source code
         uses: actions/checkout@v3
         with:
           ref: hpcc-platform-${{ matrix.branch }}
           submodules: recursive
 
-      - name: "Bootstrap vcpkg"
-        working-directory: .
-        shell: "bash"
-        run: |
-          ./bootstrap-vcpkg.sh
-
       - name: "Setup NuGet Credentials"
         working-directory: .
         shell: "bash"
         run: |
-          ${{ matrix.mono }} `./vcpkg fetch nuget | tail -n 1` \
+          ${{ matrix.mono }} `vcpkg fetch nuget | tail -n 1` \
             sources add \
             -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
             -storepasswordincleartext \
             -name "GitHub" \
             -username "${{ github.repository_owner }}" \
             -password "${{ secrets.GITHUB_TOKEN }}"
-          ${{ matrix.mono }} `./vcpkg fetch nuget | tail -n 1` \
+
+      - name: "Setup NuGet API key"
+        working-directory: .
+        shell: "bash"
+        run: |
+          ${{ matrix.mono }} `vcpkg fetch nuget | tail -n 1` \
             setapikey "${{ secrets.GITHUB_TOKEN }}" \
             -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
 
       - name: "Update nuget (overlays)"
         shell: "bash"
         run: |
-          ./vcpkg install --overlay-ports=overlays --keep-going --triplet ${{ matrix.triplet }}
+          vcpkg install --overlay-ports=overlays --keep-going --triplet ${{ matrix.triplet }}
+
