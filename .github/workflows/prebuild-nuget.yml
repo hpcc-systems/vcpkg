@@ -41,46 +41,55 @@ jobs:
             triplet: "x64-linux"
             mono: "mono"
             sudo: "sudo"
+            logs: "/usr/local/share/vcpkg"
           - label: "ubuntu-20.04-x64"
             os: "ubuntu-20.04"
             triplet: "x64-linux"
             mono: "mono"
             sudo: "sudo"
+            logs: "/usr/local/share/vcpkg"
           - label: "ubuntu-22.04-x64"
             os: "ubuntu-22.04"
             triplet: "x64-linux"
             mono: "mono"
             sudo: "sudo"
+            logs: "/usr/local/share/vcpkg"
           - label: "windows-2019-x64"
             os: "windows-2019"
             triplet: "x64-windows"
             mono: ""
             sudo: ""
+            logs: "C:/vcpkg"
           - label: "windows-2019-x86"
             os: "windows-2019"
             triplet: "x86-windows"
             mono: ""
             sudo: ""
+            logs: "C:/vcpkg"
           - label: "windows-2022-x64"
             os: "windows-2022"
             triplet: "x64-windows"
             mono: ""
             sudo: ""
+            logs: "C:/vcpkg"
           - label: "windows-2022-x86"
             os: "windows-2022"
             triplet: "x86-windows"
             mono: ""
             sudo: ""
+            logs: "C:/vcpkg"
           - label: "macos-11-x64"
             os: "macos-11"
             triplet: "x64-osx"
             mono: "mono"
             sudo: "sudo"
+            logs: "/usr/local/share/vcpkg"
           - label: "macos-12-x64"
             os: "macos-12"
             triplet: "x64-osx"
             mono: "mono"
             sudo: "sudo"
+            logs: "/usr/local/share/vcpkg"
       fail-fast: false
 
     name: "${{ matrix.label }} - ${{ matrix.branch }}"
@@ -93,23 +102,27 @@ jobs:
           sudo apt-get update -y
           sudo apt-get -yq install build-essential binutils-dev pkg-config libtool autotools-dev automake
 
-      - name: Ubuntu Mono Dependencies
-        if: ${{ matrix.os == 'ubuntu-22.04' }}
-        shell: "bash"
-        run: |
-          sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-          echo "deb https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
-          sudo apt-get update -y
-          sudo apt-get -yq install -f mono-complete
-
       - name: OSX Dependencies
         if: ${{ matrix.os == 'macos-11' || matrix.os == 'macos-12'}}
         shell: "bash"
         run: |
           brew install pkg-config automake libtool
 
+      - name: "Setup NuGet Credentials"
+        shell: "bash"
+        run: |
+          ${{ matrix.mono }} `vcpkg fetch nuget | tail -n 1` \
+            sources add \
+            -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
+            -storepasswordincleartext \
+            -name "GitHub" \
+            -username "${{ github.repository_owner }}" \
+            -password "${{ secrets.GITHUB_TOKEN }}"
+          ${{ matrix.mono }} `vcpkg fetch nuget | tail -n 1` \
+            setapikey "${{ secrets.GITHUB_TOKEN }}" \
+            -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+
       - name: "Remove builtin vcpkg (old)"
-        working-directory: .
         shell: "bash"
         run: |
           ${{ matrix.sudo }} rm -rf "$VCPKG_INSTALLATION_ROOT"
@@ -121,27 +134,17 @@ jobs:
           submodules: recursive
 
       - name: "Bootstrap vcpkg"
-        working-directory: .
         shell: "bash"
         run: |
           ./bootstrap-vcpkg.sh
 
-      - name: "Setup NuGet Credentials"
-        working-directory: .
-        shell: "bash"
-        run: |
-          ${{ matrix.mono }} `./vcpkg fetch nuget | tail -n 1` \
-            sources add \
-            -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
-            -storepasswordincleartext \
-            -name "GitHub" \
-            -username "${{ github.repository_owner }}" \
-            -password "${{ secrets.GITHUB_TOKEN }}"
-          ${{ matrix.mono }} `./vcpkg fetch nuget | tail -n 1` \
-            setapikey "${{ secrets.GITHUB_TOKEN }}" \
-            -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
-
       - name: "Update nuget (overlays)"
         shell: "bash"
         run: |
-          ./vcpkg install --overlay-ports=overlays --keep-going --triplet ${{ matrix.triplet }}
+          ./vcpkg install --vcpkg-root=. --overlay-ports=overlays --triplet ${{ matrix.triplet }}
+
+      - uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: ${{ matrix.label }}-logs
+          path: ${{ matrix.logs }}/buildtrees/*/*.log
