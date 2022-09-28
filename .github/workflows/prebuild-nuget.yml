@@ -58,46 +58,55 @@ jobs:
             triplet: "x64-linux"
             mono: "mono"
             sudo: "sudo"
+            logs: "/usr/local/share/vcpkg"
           - label: "ubuntu-20.04-x64"
             os: "ubuntu-20.04"
             triplet: "x64-linux"
             mono: "mono"
             sudo: "sudo"
+            logs: "/usr/local/share/vcpkg"
           - label: "ubuntu-22.04-x64"
             os: "ubuntu-22.04"
             triplet: "x64-linux"
             mono: "mono"
             sudo: "sudo"
+            logs: "/usr/local/share/vcpkg"
           - label: "windows-2019-x64"
             os: "windows-2019"
             triplet: "x64-windows"
             mono: ""
             sudo: ""
+            logs: "C:/vcpkg"
           - label: "windows-2019-x86"
             os: "windows-2019"
             triplet: "x86-windows"
             mono: ""
             sudo: ""
+            logs: "C:/vcpkg"
           - label: "windows-2022-x64"
             os: "windows-2022"
             triplet: "x64-windows"
             mono: ""
             sudo: ""
+            logs: "C:/vcpkg"
           - label: "windows-2022-x86"
             os: "windows-2022"
             triplet: "x86-windows"
             mono: ""
             sudo: ""
+            logs: "C:/vcpkg"
           - label: "macos-11-x64"
             os: "macos-11"
             triplet: "x64-osx"
             mono: "mono"
             sudo: "sudo"
+            logs: "/usr/local/share/vcpkg"
           - label: "macos-12-x64"
             os: "macos-12"
             triplet: "x64-osx"
             mono: "mono"
             sudo: "sudo"
+            logs: "/usr/local/share/vcpkg"
       fail-fast: false
 
     name: "${{ matrix.label }} - ${{ matrix.branch }}"
@@ -116,14 +125,7 @@ jobs:
         run: |
           brew install pkg-config automake libtool
 
-      - name: Check out source code
-        uses: actions/checkout@v3
-        with:
-          ref: hpcc-platform-${{ matrix.branch }}
-          submodules: recursive
-
-      - name: "Setup NuGet Credentials"
-        working-directory: .
+      - name: "Setup NuGet Sources"
         shell: "bash"
         run: |
           ${{ matrix.mono }} `vcpkg fetch nuget | tail -n 1` \
@@ -135,15 +137,35 @@ jobs:
             -password "${{ secrets.GITHUB_TOKEN }}"
 
       - name: "Setup NuGet API key"
-        working-directory: .
         shell: "bash"
         run: |
           ${{ matrix.mono }} `vcpkg fetch nuget | tail -n 1` \
             setapikey "${{ secrets.GITHUB_TOKEN }}" \
             -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
 
+      - name: "Remove builtin vcpkg (old)"
+        shell: "bash"
+        run: |
+          ${{ matrix.sudo }} rm -rf "$VCPKG_INSTALLATION_ROOT"
+
+      - name: Check out source code
+        uses: actions/checkout@v3
+        with:
+          ref: hpcc-platform-${{ matrix.branch }}
+          submodules: recursive
+
+      - name: "Bootstrap vcpkg"
+        shell: "bash"
+        run: |
+          ./bootstrap-vcpkg.sh
+
       - name: "Update nuget (overlays)"
         shell: "bash"
         run: |
-          vcpkg install --overlay-ports=overlays --keep-going --triplet ${{ matrix.triplet }}
+          ./vcpkg install --vcpkg-root=. --overlay-ports=overlays --triplet=${{ matrix.triplet }}
 
+      - uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: ${{ matrix.label }}-logs
+          path: ${{ matrix.logs }}/buildtrees/*/*.log
