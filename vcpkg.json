@@ -1,0 +1,132 @@
+{
+    "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
+    "name": "hpcc-platform",
+    "version": "9.10.0",
+    "dependencies": [
+        "apr",
+        "apr-util",
+        {
+            "name": "aws-sdk-cpp",
+            "default-features": false,
+            "features": [
+                "s3",
+                "sqs"
+            ]
+        },
+        {
+            "name": "arrow",
+            "default-features": false,
+            "features": [
+                "acero",
+                "dataset",
+                "filesystem",
+                "parquet"
+            ],
+            "platform": "!(windows & x86)"
+        },
+        "azure-storage-blobs-cpp",
+        "azure-storage-files-shares-cpp",
+        "boost-circular-buffer",
+        "boost-property-tree",
+        "boost-regex",
+        "cpp-driver",
+        "cppunit",
+        "cpr",
+        "curl",
+        {
+            "name": "elasticlient",
+            "platform": "!windows"
+        },
+        "h3",
+        "hiredis",
+        {
+            "name": "icu",
+            "features": [
+                "tools"
+            ]
+        },
+        "jsoncpp",
+        "jwt-cpp",
+        {
+            "name": "libarchive",
+            "default-features": false,
+            "features": [
+                "bzip2"
+            ]
+        },
+        "libcouchbase-cxx",
+        "libgit2",
+        {
+            "name": "libiconv",
+            "platform": "osx"
+        },
+        {
+            "name": "libmemcached",
+            "platform": "!windows & !osx"
+        },
+        {
+            "name": "libmysql",
+            "platform": "!(windows & x86)"
+        },
+        "librdkafka",
+        "libuv",
+        "libxml2",
+        {
+            "name": "libxslt",
+            "default-features": false,
+            "features": []
+        },
+        "libyaml",
+        "lz4",
+        "minizip",
+        "mongo-cxx-driver",
+        "nlohmann-json",
+        "nlp-engine",
+        {
+            "name": "numactl",
+            "platform": "!windows & !osx"
+        },
+        {
+            "name": "openblas",
+            "features": [
+                "dynamic-arch",
+                "threads"
+            ],
+            "platform": "!windows"
+        },
+        {
+            "name": "openblas",
+            "features": [
+                "threads"
+            ],
+            "platform": "windows"
+        },
+        {
+            "name": "openldap",
+            "platform": "!windows"
+        },
+        "openssl",
+        {
+            "name": "opentelemetry-cpp",
+            "default-features": false,
+            "features": [
+                "otlp-http",
+                "otlp-grpc"
+            ]
+        },
+        "pcre2",
+        {
+            "name": "python3",
+            "platform": "windows"
+        },
+        "rapidjson",
+        "sqlite3",
+        "tbb",
+        "wasmtime-cpp-api",
+        {
+            "name": "winflexbison",
+            "platform": "windows"
+        },
+        "zlib"
+    ]
+}
