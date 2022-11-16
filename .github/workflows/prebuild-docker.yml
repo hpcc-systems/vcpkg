@@ -1,0 +1,83 @@
+name: Refresh docker NuGet cache
+
+on:
+  push:
+    tags:
+      - "*"
+    branches:
+      - "hpcc-platform-9.2.x"
+
+  workflow_call:
+    inputs:
+      branch:
+        description: "The branch to build"
+        required: true
+        type: string
+
+  workflow_dispatch:
+
+jobs:
+  build-images:
+    strategy:
+      matrix:
+        image:
+          [
+            "ubuntu-22.10",
+            "ubuntu-22.04",
+            "ubuntu-20.04",
+            "centos-8",
+            "centos-7",
+            "amazonlinux",
+          ]
+      fail-fast: false
+
+    name: "Docker:  ${{ matrix.image }}"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.branch || github.ref }}
+
+      - name: Calculate vars
+        id: vars
+        run: |
+          vcpkg_ref=${{ inputs.branch || github.ref }}
+          vcpkg_base_ref=${{ inputs.branch || github.event.base_ref || github.ref }}
+          echo "vcpkg_ref=$vcpkg_ref" >> $GITHUB_OUTPUT
+          echo "vcpkg_tag=$(echo $vcpkg_ref | cut -d'/' -f3)" >> $GITHUB_OUTPUT
+          echo "vcpkg_branch=$(echo $vcpkg_base_ref | cut -d'/' -f3)" >> $GITHUB_OUTPUT
+          echo "sha_short=$(git rev-parse --short=8 HEAD)" >> $GITHUB_OUTPUT
+          echo "repository_owner=${{ github.repository_owner }}" >> $GITHUB_OUTPUT
+
+      - name: Print vars
+        run: |
+          echo "${{ toJSON(steps.vars.outputs) }})"
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build ${{ matrix.os }} image
+        uses: docker/build-push-action@v3
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          file: dockerfiles/${{ matrix.image }}.dockerfile
+          context: .
+          push: ${{ steps.vars.outputs.repository_owner == 'hpcc-systems' }}
+          build-args: |
+            NUGET_MODE=readwrite
+            GITHUB_ACTOR=${{ github.repository_owner }}
+            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          tags: |
+            hpccsystems/platform-build-base-${{ matrix.image }}:${{ steps.vars.outputs.sha_short }}
+            hpccsystems/platform-build-base-${{ matrix.image }}:${{ steps.vars.outputs.vcpkg_tag }}
+          cache-from: type=registry,ref=hpccbuilds/platform-build-base-${{ matrix.image }}:${{ steps.vars.outputs.vcpkg_branch }}
+          cache-to: type=registry,ref=hpccbuilds/platform-build-base-${{ matrix.image }}:${{ steps.vars.outputs.vcpkg_branch }},mode=max
