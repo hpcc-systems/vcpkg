@@ -1,0 +1,126 @@
+name: Receive PR
+
+# read-only repo token
+# no access to secrets
+on:
+  pull_request:
+
+jobs:
+  build-images:
+    strategy:
+      matrix:
+        image: ["ubuntu-22.04"]
+      fail-fast: false
+
+    name: "${{ matrix.image }}"
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set vars
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short=8 HEAD)" >> $GITHUB_OUTPUT
+
+      - name: "Build dockerfile"
+        shell: "bash"
+        run: |
+          docker build --progress plain --pull --rm -f "dockerfiles/${{ matrix.image }}.dockerfile" \
+              -t hpccbuilds/vcpkg-${{ matrix.image }}:${{ steps.vars.outputs.sha_short }} \
+              -t hpccbuilds/vcpkg-${{ matrix.image }}:latest \
+              --build-arg GITHUB_ACTOR=${{ github.actor }} \
+              --build-arg GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
+              "."
+
+      - name: Save PR number
+        run: |
+          mkdir -p ./pr
+          echo ${{ github.event.number }} > ./pr/NR
+      - uses: actions/upload-artifact@v2
+        with:
+          name: pr
+          path: pr/
+
+  build:
+    strategy:
+      matrix:
+        label:
+          [
+            "windows-2019-x64",
+            "windows-2022-x64",
+            "macos-11-x64",
+            "macos-12-x64",
+          ]
+        include:
+          - label: "windows-2019-x64"
+            os: "windows-2019"
+            triplet: "x64-windows"
+            mono: ""
+            sudo: ""
+            logs: "C:/vcpkg"
+          - label: "windows-2022-x64"
+            os: "windows-2022"
+            triplet: "x64-windows"
+            mono: ""
+            sudo: ""
+            logs: "C:/vcpkg"
+          - label: "macos-11-x64"
+            os: "macos-11"
+            triplet: "x64-osx"
+            mono: "mono"
+            sudo: "sudo"
+            logs: "/usr/local/share/vcpkg"
+          - label: "macos-12-x64"
+            os: "macos-12"
+            triplet: "x64-osx"
+            mono: "mono"
+            sudo: "sudo"
+            logs: "/usr/local/share/vcpkg"
+      fail-fast: false
+
+    name: "${{ matrix.label }}"
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: OSX Dependencies
+        if: ${{ matrix.os == 'macos-11' || matrix.os == 'macos-12'}}
+        shell: "bash"
+        run: |
+          brew install pkg-config automake libtool
+
+      - name: "Setup NuGet Sources"
+        shell: "bash"
+        run: |
+          ${{ matrix.mono }} `vcpkg fetch nuget | tail -n 1` \
+            sources add \
+            -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
+            -storepasswordincleartext \
+            -name "GitHub" \
+            -username "${{ github.repository_owner }}" \
+            -password "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: "Remove builtin vcpkg (old)"
+        shell: "bash"
+        run: |
+          ${{ matrix.sudo }} rm -rf "$VCPKG_INSTALLATION_ROOT"
+
+      - name: Check out source code
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: "Bootstrap vcpkg"
+        shell: "bash"
+        run: |
+          ./bootstrap-vcpkg.sh
+
+      - name: "Update nuget (overlays)"
+        shell: "bash"
+        run: |
+          ./vcpkg install --vcpkg-root=. --overlay-ports=overlays --triplet=${{ matrix.triplet }}
+
+      - name: "Upload failed logs"
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: ${{ matrix.label }}-logs
+          path: ${{ matrix.logs }}/buildtrees/*/*.log
