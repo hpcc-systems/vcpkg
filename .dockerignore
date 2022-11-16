@@ -1,0 +1,16 @@
+*
+
+#  Folders
+!overlays
+!ports
+!scripts
+!toolsrc
+!triplets
+!version
+
+#  Files
+!.vcpkg-root
+!bootstrap-vcpkg.sh
+!LICENSE.txt
+!shell.nix
+!vcpkg.json
