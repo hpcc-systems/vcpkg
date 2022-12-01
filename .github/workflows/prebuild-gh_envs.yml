@@ -1,49 +1,25 @@
-name: Receive PR
+name: Refresh GH environments NuGet cache
 
 env:
-  VCPKG_BINARY_SOURCES: "clear;nuget,GitHub,read"
+  VCPKG_BINARY_SOURCES: "clear;nuget,GitHub,readwrite"
 
-# read-only repo token
-# no access to secrets
 on:
-  pull_request:
+  push:
+    branches:
+      - "hpcc-platform-8.12.x"
+      - "TEST"
+
+  workflow_dispatch:
+    inputs:
+      os:
+        description: "OS"
+        required: true
+        default: "all"
+        type: choice
+        options:
+          - "all"
 
 jobs:
-  build-images:
-    strategy:
-      matrix:
-        image: ["ubuntu-22.04"]
-      fail-fast: false
-
-    name: "${{ matrix.image }}"
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set vars
-        id: vars
-        run: echo "sha_short=$(git rev-parse --short=8 HEAD)" >> $GITHUB_OUTPUT
-
-      - name: "Build dockerfile"
-        shell: "bash"
-        run: |
-          docker build --progress plain --pull --rm -f "dockerfiles/${{ matrix.image }}.dockerfile" \
-              -t hpccbuilds/vcpkg-${{ matrix.image }}:${{ steps.vars.outputs.sha_short }} \
-              -t hpccbuilds/vcpkg-${{ matrix.image }}:latest \
-              --build-arg GITHUB_ACTOR=${{ github.actor }} \
-              --build-arg GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
-              "."
-
-      - name: Save PR number
-        run: |
-          mkdir -p ./pr
-          echo ${{ github.event.number }} > ./pr/NR
-      - uses: actions/upload-artifact@v2
-        with:
-          name: pr
-          path: pr/
-
   build:
     strategy:
       matrix:
@@ -152,7 +128,7 @@ jobs:
         if: ${{ matrix.os == 'macos-11' || matrix.os == 'macos-12'}}
         shell: "bash"
         run: |
-          brew install pkg-config automake libtool
+          brew install pkg-config autoconf autoconf-archive automake libtool
 
       - name: "Remove builtin vcpkg (old)"
         working-directory: .
@@ -182,8 +158,19 @@ jobs:
             -name "GitHub" \
             -username "${{ github.repository_owner }}" \
             -password "${{ secrets.GITHUB_TOKEN }}"
+          ${{ matrix.mono }} `./vcpkg fetch nuget | tail -n 1` \
+            setapikey "${{ secrets.GITHUB_TOKEN }}" \
+            -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
 
       - name: "Update nuget (overlays)"
         shell: "bash"
         run: |
           ./vcpkg install --overlay-ports=overlays --keep-going --triplet ${{ matrix.triplet }}
+
+      - name: logs-artifact
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: err-logs
+          path: |
+            buildtrees/*/*.log
