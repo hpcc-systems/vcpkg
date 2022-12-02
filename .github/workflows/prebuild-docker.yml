@@ -49,6 +49,7 @@ jobs:
           docker build --progress plain --pull --rm -f "dockerfiles/${{ matrix.image }}.dockerfile" \
               -t ${{ secrets.DOCKER_USERNAME }}/vcpkg-${{ matrix.image }}:${{ steps.vars.outputs.sha_short }} \
               -t ${{ secrets.DOCKER_USERNAME }}/vcpkg-${{ matrix.image }}:latest \
+              --build-arg NUGET_MODE=readwrite \
               --build-arg GITHUB_ACTOR=${{ github.actor }} \
               --build-arg GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
               "."
@@ -58,4 +59,3 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/vcpkg-${{ matrix.image }}:${{ steps.vars.outputs.sha_short }}
           docker push ${{ secrets.DOCKER_USERNAME }}/vcpkg-${{ matrix.image }}:latest
-

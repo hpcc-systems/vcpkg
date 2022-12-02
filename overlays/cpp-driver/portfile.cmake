@@ -37,14 +37,11 @@ vcpkg_from_github(
     HEAD_REF master
 )
 
-file(COPY ${CMAKE_CURRENT_LIST_DIR}/cmake/Dependencies.cmake DESTINATION ${SOURCE_PATH}/cmake)
-
 vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
 
     OPTIONS
-        -DCASS_BUILD_SHARED=OFF
-        -DCASS_BUILD_STATIC=ON
+        -DLIBUV_ROOT_DIR=${CURRENT_INSTALLED_DIR}
         -DCASS_INSTALL_HEADER_IN_SUBDIR=OFF
 )
 

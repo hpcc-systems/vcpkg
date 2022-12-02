@@ -173,4 +173,4 @@ jobs:
         with:
           name: err-logs
           path: |
-            buildtrees/*/*-err.log
+            buildtrees/*/*.log
