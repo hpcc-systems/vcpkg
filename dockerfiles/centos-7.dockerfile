@@ -23,15 +23,15 @@ RUN yum install -y devtoolset-9
 RUN echo "source /opt/rh/devtoolset-9/enable" >> /etc/bashrc
 SHELL ["/bin/bash", "--login", "-c"]
 
-RUN curl -o pkg-config-0.29.2.tar.gz https://pkg-config.freedesktop.org/releases/pkg-config-0.29.2.tar.gz
-RUN tar xvfz pkg-config-0.29.2.tar.gz
+RUN curl -o pkg-config-0.29.2.tar.gz https://pkg-config.freedesktop.org/releases/pkg-config-0.29.2.tar.gz && \
+    tar xvfz pkg-config-0.29.2.tar.gz
 WORKDIR /pkg-config-0.29.2
-RUN ./configure --prefix=/usr/local/pkg_config/0_29_2 --with-internal-glib
-RUN make
-RUN make install
-RUN ln -s /usr/local/pkg_config/0_29_2/bin/pkg-config /usr/local/bin/
-RUN mkdir /usr/local/share/aclocal
-RUN ln -s /usr/local/pkg_config/0_29_2/share/aclocal/pkg.m4 /usr/local/share/aclocal/
+RUN ./configure --prefix=/usr/local/pkg_config/0_29_2 --with-internal-glib && \
+    make && \
+    make install && \
+    ln -s /usr/local/pkg_config/0_29_2/bin/pkg-config /usr/local/bin/ && \
+    mkdir /usr/local/share/aclocal && \
+    ln -s /usr/local/pkg_config/0_29_2/share/aclocal/pkg.m4 /usr/local/share/aclocal/
 ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
 ENV ACLOCAL_PATH=/usr/local/share/aclocal:$ACLOCAL_PATH
@@ -88,7 +88,7 @@ FROM base_build
 
 WORKDIR /hpcc-dev
 
-COPY --from=vcpkg_build /hpcc-dev/build /hpcc-dev/build
+COPY --from=vcpkg_build /hpcc-dev/build/vcpkg_installed /hpcc-dev/vcpkg_installed
 COPY --from=vcpkg_build /hpcc-dev/tools /hpcc-dev/tools
 
 RUN ln -s /hpcc-dev/tools/cmake/bin/cmake /usr/local/bin/cmake && \

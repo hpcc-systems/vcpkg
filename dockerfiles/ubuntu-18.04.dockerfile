@@ -76,7 +76,7 @@ FROM base_build
 
 WORKDIR /hpcc-dev
 
-COPY --from=vcpkg_build /hpcc-dev/build /hpcc-dev/build
+COPY --from=vcpkg_build /hpcc-dev/build/vcpkg_installed /hpcc-dev/vcpkg_installed
 COPY --from=vcpkg_build /hpcc-dev/tools /hpcc-dev/tools
 
 RUN ln -s /hpcc-dev/tools/cmake/bin/cmake /usr/local/bin/cmake && \

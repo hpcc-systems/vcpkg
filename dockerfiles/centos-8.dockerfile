@@ -10,6 +10,7 @@ RUN yum update -y && yum install -y dnf-plugins-core && \
     curl \
     libtool \
     perl-IPC-Cmd \
+    python3 \
     unzip \
     tar \
     yum-utils \
@@ -74,7 +75,7 @@ FROM base_build
 
 WORKDIR /hpcc-dev
 
-COPY --from=vcpkg_build /hpcc-dev/build /hpcc-dev/build
+COPY --from=vcpkg_build /hpcc-dev/build/vcpkg_installed /hpcc-dev/vcpkg_installed
 COPY --from=vcpkg_build /hpcc-dev/tools /hpcc-dev/tools
 
 RUN ln -s /hpcc-dev/tools/cmake/bin/cmake /usr/local/bin/cmake && \

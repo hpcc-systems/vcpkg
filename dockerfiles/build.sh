@@ -31,8 +31,8 @@ function doBuild() {
     docker push $DOCKER_USERNAME/vcpkg-$1:latest
 }
 
-doBuild centos-7
 doBuild ubuntu-22.04
 doBuild ubuntu-20.04
 doBuild ubuntu-18.04
 doBuild centos-8
+doBuild centos-7
