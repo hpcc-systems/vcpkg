@@ -79,8 +79,10 @@ WORKDIR /hpcc-dev
 COPY --from=vcpkg_build /hpcc-dev/build/vcpkg_installed /hpcc-dev/vcpkg_installed
 COPY --from=vcpkg_build /hpcc-dev/tools /hpcc-dev/tools
 
-RUN ln -s /hpcc-dev/tools/cmake/bin/cmake /usr/local/bin/cmake && \
+RUN cp -rs /hpcc-dev/tools/cmake/bin /usr/local/ && \
+    cp -rs /hpcc-dev/tools/cmake/share /usr/local/ && \
     ln -s /hpcc-dev/tools/ninja/ninja /usr/local/bin/ninja && \
-    ln -s /hpcc-dev/tools/node/bin/node /usr/local/bin/node && \
-    ln -s /hpcc-dev/tools/node/bin/npm /usr/local/bin/npm && \
-    ln -s /hpcc-dev/tools/node/bin/npx /usr/local/bin/npx
+    cp -rs /hpcc-dev/tools/node/bin /usr/local/ && \
+    cp -rs /hpcc-dev/tools/node/include /usr/local/ && \
+    cp -rs /hpcc-dev/tools/node/lib /usr/local/ && \
+    cp -rs /hpcc-dev/tools/node/share /usr/local/
