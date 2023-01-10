@@ -63,7 +63,7 @@ RUN ./vcpkg install \
     --x-install-root=/hpcc-dev/build/vcpkg_installed \
     --overlay-ports=./overlays \
     --triplet=x64-linux-dynamic
-# ./vcpkg install --x-install-root=/hpcc-dev/build/vcpkg_installed --overlay-ports=./overlays --triplet=x64-linux-dynamic
+# ./vcpkg install --overlay-ports=./overlays --triplet=x64-linux-dynamic --x-install-root=/hpcc-dev/build/vcpkg_installed
 
 RUN mkdir -p /hpcc-dev/tools/cmake
 RUN cp -r $(dirname $(dirname `./vcpkg fetch cmake | tail -n 1`))/* /hpcc-dev/tools/cmake
