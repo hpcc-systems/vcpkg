@@ -36,7 +36,7 @@ RUN apt-get update
 RUN apt-get install -y mono-complete
 
 ARG NUGET_MODE=readwrite
-ENV VCPKG_BINARY_SOURCES="clear;nuget,GitHub,${NUGET_MODE}"
+ENV VCPKG_BINARY_SOURCES="clear;default,readwrite;nuget,GitHub,${NUGET_MODE}"
 ENV VCPKG_NUGET_REPOSITORY=https://github.com/hpcc-systems/vcpkg
 
 COPY . /hpcc-dev/vcpkg
@@ -64,7 +64,7 @@ RUN ./vcpkg install \
     --x-install-root=/hpcc-dev/build/vcpkg_installed \
     --overlay-ports=./overlays \
     --triplet=x64-linux-dynamic
-# ./vcpkg install --x-install-root=/hpcc-dev/build/vcpkg_installed --overlay-ports=./overlays --triplet=x64-linux-dynamic
+# ./vcpkg install --overlay-ports=./overlays --triplet=x64-linux-dynamic --x-install-root=/hpcc-dev/build/vcpkg_installed
 
 RUN mkdir -p /hpcc-dev/tools/cmake
 RUN cp -r $(dirname $(dirname `./vcpkg fetch cmake | tail -n 1`))/* /hpcc-dev/tools/cmake
@@ -77,7 +77,7 @@ FROM base_build
 
 WORKDIR /hpcc-dev
 
-COPY --from=vcpkg_build /hpcc-dev/build/vcpkg_installed /hpcc-dev/vcpkg_installed
+COPY --from=vcpkg_build /root/.cache/vcpkg /root/.cache/vcpkg
 COPY --from=vcpkg_build /hpcc-dev/tools /hpcc-dev/tools
 
 RUN cp -rs /hpcc-dev/tools/cmake/bin /usr/local/ && \

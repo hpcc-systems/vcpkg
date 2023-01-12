@@ -35,7 +35,7 @@ RUN apt-get update
 RUN apt-get install -y mono-complete
 
 ARG NUGET_MODE=readwrite
-ENV VCPKG_BINARY_SOURCES="clear;nuget,GitHub,${NUGET_MODE}"
+ENV VCPKG_BINARY_SOURCES="clear;default,readwrite;nuget,GitHub,${NUGET_MODE}"
 ENV VCPKG_NUGET_REPOSITORY=https://github.com/hpcc-systems/vcpkg
 
 COPY . /hpcc-dev/vcpkg
@@ -76,7 +76,7 @@ FROM base_build
 
 WORKDIR /hpcc-dev
 
-COPY --from=vcpkg_build /hpcc-dev/build/vcpkg_installed /hpcc-dev/vcpkg_installed
+COPY --from=vcpkg_build /root/.cache/vcpkg /root/.cache/vcpkg
 COPY --from=vcpkg_build /hpcc-dev/tools /hpcc-dev/tools
 
 RUN cp -rs /hpcc-dev/tools/cmake/bin /usr/local/ && \
