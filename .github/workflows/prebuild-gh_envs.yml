@@ -5,8 +5,9 @@ env:
 
 on:
   push:
-    tags:
-      - "*"
+    branches:
+      - "hpcc-platform-8.12.x"
+      - "TEST"
 
   workflow_dispatch:
     inputs:
