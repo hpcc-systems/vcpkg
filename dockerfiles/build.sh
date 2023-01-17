@@ -18,17 +18,17 @@ echo "GITHUB_REF: $GITHUB_REF"
 echo "DOCKER_USERNAME: $DOCKER_USERNAME"
 echo "DOCKER_PASSWORD: $DOCKER_PASSWORD"
 
-docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+# docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 
 function doBuild() {
     docker build --progress plain --pull --rm -f "$SCRIPT_DIR/$1.dockerfile" \
-        -t $DOCKER_USERNAME/vcpkg-$1:$GITHUB_REF \
-        -t $DOCKER_USERNAME/vcpkg-$1:latest \
+        -t hpccsystems/platform-build-base-$1:$GITHUB_REF \
+        -t hpccsystems/platform-build-base-$1:latest \
         --build-arg GITHUB_ACTOR=$GITHUB_ACTOR \
         --build-arg GITHUB_TOKEN=$GITHUB_TOKEN \
         "$SCRIPT_DIR/.."
-    docker push $DOCKER_USERNAME/vcpkg-$1:$GITHUB_REF
-    docker push $DOCKER_USERNAME/vcpkg-$1:latest
+    # docker push hpccsystems/platform-build-base-$1:$GITHUB_REF
+    # docker push hpccsystems/platform-build-base-$1:latest
 }
 
 doBuild amazonlinux
