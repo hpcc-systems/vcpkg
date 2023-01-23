@@ -48,7 +48,7 @@ jobs:
           echo "vcpkg_tag=$(echo $vcpkg_ref | cut -d'/' -f3)" >> $GITHUB_OUTPUT
           echo "vcpkg_branch=$(echo $vcpkg_base_ref | cut -d'/' -f3)" >> $GITHUB_OUTPUT
           echo "sha_short=$(git rev-parse --short=8 HEAD)" >> $GITHUB_OUTPUT
-          echo "actor=${{ github.actor }}" >> $GITHUB_OUTPUT
+          echo "repository_owner=${{ github.repository_owner }}" >> $GITHUB_OUTPUT
 
       - name: Print vars
         run: |
@@ -70,10 +70,10 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           file: dockerfiles/${{ matrix.image }}.dockerfile
           context: .
-          push: ${{ steps.vars.outputs.actor == 'hpcc-systems' }}
+          push: ${{ steps.vars.outputs.repository_owner == 'hpcc-systems' }}
           build-args: |
             NUGET_MODE=readwrite
-            GITHUB_ACTOR=${{ github.actor }}
+            GITHUB_ACTOR=${{ github.repository_owner }}
             GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
           tags: |
             hpccsystems/platform-build-base-${{ matrix.image }}:${{ steps.vars.outputs.sha_short }}
