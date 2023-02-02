@@ -1,0 +1,39 @@
+name: prebuild
+
+env:
+  VCPKG_BINARY_SOURCES: "clear;nuget,GitHub,readwrite"
+
+on:
+  push:
+    branches:
+      - "main"
+
+  schedule:
+    - cron: "0 0,6,12,18 * * *"
+
+  workflow_dispatch:
+
+jobs:
+  prebuild-docker-8-12:
+    uses: hpcc-systems/vcpkg/.github/workflows/prebuild-docker.yml@hpcc-platform-8.12.x
+    with:
+      branch: refs/heads/hpcc-platform-8.12.x
+    secrets: inherit
+
+  prebuild-gh_envs-8-12:
+    uses: hpcc-systems/vcpkg/.github/workflows/prebuild-gh_envs.yml@hpcc-platform-8.12.x
+    with:
+      branch: refs/heads/hpcc-platform-8.12.x
+    secrets: inherit
+
+  prebuild-docker-8-8:
+    uses: hpcc-systems/vcpkg/.github/workflows/prebuild-docker.yml@hpcc-platform-8.8.x
+    with:
+      branch: refs/heads/hpcc-platform-8.8.x
+    secrets: inherit
+
+  prebuild-gh_envs-8-8:
+    uses: hpcc-systems/vcpkg/.github/workflows/prebuild-gh_envs.yml@hpcc-platform-8.8.x
+    with:
+      branch: refs/heads/hpcc-platform-8.8.x
+    secrets: inherit
