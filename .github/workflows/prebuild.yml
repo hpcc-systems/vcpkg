@@ -8,8 +8,12 @@ on:
     branches:
       - "hpcc-platform-*"
 
-  schedule:
-    - cron: "0 8,12,15 * * *"
+  workflow_call:
+    inputs:
+      branch:
+        description: "The branch to build"
+        required: true
+        type: string
 
 jobs:
   build:
@@ -85,9 +89,10 @@ jobs:
           ${{ matrix.sudo }} rm -rf "$VCPKG_INSTALLATION_ROOT"
 
       - name: Check out source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
-          submodules: recursive
+          fetch-depth: 0
+          ref: ${{ inputs.branch || github.ref }}
 
       - name: "Bootstrap vcpkg"
         working-directory: .
@@ -115,3 +120,11 @@ jobs:
         shell: "bash"
         run: |
           ./vcpkg install --overlay-ports=./overlays --keep-going --triplet ${{ matrix.triplet }}
+
+      - name: Upload error logs
+        if: ${{ failure() || cancelled() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.os }}-logs
+          path: ./**/*.log
+
