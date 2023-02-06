@@ -7,15 +7,14 @@ on:
     branches:
       - "hpcc-platform-8.12.x"
 
-  workflow_dispatch:
+  workflow_call:
     inputs:
-      image:
-        description: "Image"
+      branch:
+        description: "The branch to build"
         required: true
-        default: "all"
-        type: choice
-        options:
-          - "all"
+        type: string
+
+  workflow_dispatch:
 
 jobs:
   build-images:
@@ -38,12 +37,15 @@ jobs:
     steps:
       - name: Check out source code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.branch || github.ref }}
 
       - name: Calculate vars
         id: vars
         run: |
-          vcpkg_ref=${{ github.ref }}
-          vcpkg_base_ref=${{ github.event.base_ref || github.ref }}
+          vcpkg_ref=${{ inputs.branch || github.ref }}
+          vcpkg_base_ref=${{ inputs.branch || github.event.base_ref || github.ref }}
           echo "vcpkg_ref=$vcpkg_ref" >> $GITHUB_OUTPUT
           echo "vcpkg_tag=$(echo $vcpkg_ref | cut -d'/' -f3)" >> $GITHUB_OUTPUT
           echo "vcpkg_branch=$(echo $vcpkg_base_ref | cut -d'/' -f3)" >> $GITHUB_OUTPUT

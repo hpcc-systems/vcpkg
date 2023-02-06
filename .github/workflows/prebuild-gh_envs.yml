@@ -7,17 +7,15 @@ on:
   push:
     branches:
       - "hpcc-platform-8.12.x"
-      - "TEST"
+
+  workflow_call:
+    inputs:
+      branch:
+        description: "The branch to build"
+        required: true
+        type: string
 
   workflow_dispatch:
-    inputs:
-      os:
-        description: "OS"
-        required: true
-        default: "all"
-        type: choice
-        options:
-          - "all"
 
 jobs:
   build:
@@ -128,7 +126,7 @@ jobs:
         if: ${{ matrix.os == 'macos-11' || matrix.os == 'macos-12'}}
         shell: "bash"
         run: |
-          brew install pkg-config autoconf autoconf-archive automake libtool
+          brew install pkg-config automake libtool autoconf autoconf-archive
 
       - name: "Remove builtin vcpkg (old)"
         working-directory: .
@@ -139,7 +137,8 @@ jobs:
       - name: Check out source code
         uses: actions/checkout@v3
         with:
-          submodules: recursive
+          fetch-depth: 0
+          ref: ${{ inputs.branch || github.ref }}
 
       - name: "Bootstrap vcpkg"
         working-directory: .
@@ -165,12 +164,12 @@ jobs:
       - name: "Update nuget (overlays)"
         shell: "bash"
         run: |
-          ./vcpkg install --overlay-ports=overlays --keep-going --triplet ${{ matrix.triplet }}
+          ./vcpkg install --overlay-ports=./overlays --keep-going --triplet ${{ matrix.triplet }}
 
-      - name: logs-artifact
-        if: ${{ failure() }}
-        uses: actions/upload-artifact@v2
+      - name: Upload error logs
+        if: ${{ failure() || cancelled() }}
+        uses: actions/upload-artifact@v3
         with:
-          name: err-logs
-          path: |
-            buildtrees/*/*.log
+          name: ${{ matrix.os }}-logs
+          path: ./**/*.log
+
