@@ -3,10 +3,9 @@ cmake_minimum_required(VERSION 3.15)
 # set the project name and version
 project(nlp-engine)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED On)
+set (CMAKE_CXX_STANDARD 11)
 
-find_package(ICU COMPONENTS data i18n io tu uc REQUIRED)
+find_package(ICU REQUIRED COMPONENTS data i18n io tu uc REQUIRED)
 
 include_directories(cs/include)
 include_directories(include)
@@ -26,7 +25,7 @@ else()
   add_definitions( -DLINUX -Wno-write-strings -Wno-deprecated )
 endif()
 
-file(GLOB lite_src "lite/*.cpp")
+file(GLOB lite_src "lite/*.h" "lite/*.cpp")
 add_library(nlp-engine SHARED ${lite_src})
 target_link_libraries(nlp-engine PRIVATE 
   prim
@@ -45,12 +44,20 @@ target_include_directories(nlp-engine
 
 install(TARGETS nlp-engine 
   EXPORT nlp-engine-config
-  DESTINATION lib
+  RUNTIME DESTINATION bin
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
 )
 
 install(EXPORT nlp-engine-config
   FILE nlp-engine-config.cmake
   DESTINATION share/cmake/nlp-engine
+)
+
+install(
+  DIRECTORY ./analyzers
+  DESTINATION share/nlp-engine
+  COMPONENT Runtime
 )
 
 install(
