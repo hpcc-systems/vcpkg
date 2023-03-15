@@ -5,7 +5,7 @@ on:
     tags:
       - "*"
     branches:
-      - "hpcc-platform-8.12.x"
+      - "hpcc-platform-8.12.*"
 
   workflow_call:
     inputs:

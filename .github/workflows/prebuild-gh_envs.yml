@@ -6,7 +6,7 @@ env:
 on:
   push:
     branches:
-      - "hpcc-platform-8.12.x"
+      - "hpcc-platform-8.12.*"
 
   workflow_call:
     inputs:
@@ -172,4 +172,3 @@ jobs:
         with:
           name: ${{ matrix.os }}-logs
           path: ./**/*.log
-
