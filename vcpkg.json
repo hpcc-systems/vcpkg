@@ -61,6 +61,7 @@
         },
         "libyaml",
         "lz4",
+        "minzip",
         "mongo-cxx-driver",
         "nlohmann-json",
         "nlp-engine",
