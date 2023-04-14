@@ -1,4 +1,4 @@
-FROM amazonlinux AS base_build
+FROM amazonlinux:2 AS base_build
 
 # Build Tools  ---
 RUN yum update -y && yum install -y \
