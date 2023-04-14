@@ -14,18 +14,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  prebuild-docker-9-0:
-    uses: hpcc-systems/vcpkg/.github/workflows/prebuild-docker.yml@hpcc-platform-9.0.x
-    with:
-      branch: refs/heads/hpcc-platform-9.0.x
-    secrets: inherit
-
-  prebuild-gh_envs-9-0:
-    uses: hpcc-systems/vcpkg/.github/workflows/prebuild-gh_envs.yml@hpcc-platform-9.0.x
-    with:
-      branch: refs/heads/hpcc-platform-9.0.x
-    secrets: inherit
-
   prebuild-docker-8-12:
     uses: hpcc-systems/vcpkg/.github/workflows/prebuild-docker.yml@hpcc-platform-8.12.x
     with:
