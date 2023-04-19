@@ -23,7 +23,6 @@ jobs:
       matrix:
         label:
           [
-            "ubuntu-18.04-x64",
             "ubuntu-20.04-x64",
             "ubuntu-22.04-x64",
             "windows-2019-x64",
@@ -34,11 +33,6 @@ jobs:
             "macos-12-x64",
           ]
         include:
-          - label: "ubuntu-18.04-x64"
-            os: "ubuntu-18.04"
-            triplet: "x64-linux-dynamic"
-            mono: "mono"
-            sudo: "sudo"
           - label: "ubuntu-20.04-x64"
             os: "ubuntu-20.04"
             triplet: "x64-linux-dynamic"
@@ -85,7 +79,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Ubuntu Dependencies
-        if: ${{ matrix.os == 'ubuntu-18.04' || matrix.os == 'ubuntu-20.04' || matrix.os == 'ubuntu-22.04' }}
+        if: ${{ matrix.os == 'ubuntu-20.04' || matrix.os == 'ubuntu-22.04' }}
         shell: "bash"
         run: |
           sudo apt-get update -y
@@ -172,4 +166,3 @@ jobs:
         with:
           name: ${{ matrix.os }}-logs
           path: ./**/*.log
-
