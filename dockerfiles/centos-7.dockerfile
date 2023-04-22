@@ -19,7 +19,7 @@ RUN yum update -y && yum install -y \
     yum-utils \
     zip 
 
-RUN yum install -y devtoolset-9
+RUN yum install -y devtoolset-9  devtoolset-11
 
 RUN echo "source /opt/rh/devtoolset-9/enable" >> /etc/bashrc
 SHELL ["/bin/bash", "--login", "-c"]
