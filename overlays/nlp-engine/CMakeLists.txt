@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.15)
 # set the project name and version
 project(nlp-engine)
 
-set (CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 
 find_package(ICU REQUIRED COMPONENTS data i18n io tu uc)
 
