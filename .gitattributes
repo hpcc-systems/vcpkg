@@ -1,5 +1,5 @@
-* -text
-ports/** -linguist-detectable
-
-# Declare files that will always have LF line endings on checkout.
-scripts/ci.baseline.txt text eol=lf
+*.tar.gz filter=lfs diff=lfs merge=lfs -text
+*.tgz filter=lfs diff=lfs merge=lfs -text
+*.tar.bz2 filter=lfs diff=lfs merge=lfs -text
+*.tar.xz filter=lfs diff=lfs merge=lfs -text
+*.zip filter=lfs diff=lfs merge=lfs -text
