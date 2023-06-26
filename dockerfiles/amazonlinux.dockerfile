@@ -24,7 +24,7 @@ RUN yum-config-manager --add-repo http://mirror.centos.org/centos/7/sclo/x86_64/
     LIBGFORTRAN5=libgfortran5-8.3.1-2.1.1.el7.x86_64.rpm && \
     wget http://mirror.centos.org/centos/7/os/x86_64/Packages/${LIBGFORTRAN5} && \
     yum install -y ${LIBGFORTRAN5} && \
-    yum install -y devtoolset-9 --nogpgcheck
+    yum install -y devtoolset-11 --nogpgcheck
 
 RUN yum install -y hostname xz && \
     curl -o pkg-config-0.29.2.tar.gz https://pkg-config.freedesktop.org/releases/pkg-config-0.29.2.tar.gz && \
@@ -92,7 +92,7 @@ RUN ln -s /usr/local/libtool/2_4_6/bin/libtool /usr/local/bin/ && \
 # ldconfig
 # ldconfig -v
 
-RUN echo "source /opt/rh/devtoolset-9/enable" > /etc/profile.d/devtoolset-9.sh
+RUN echo "source /opt/rh/devtoolset-11/enable" > /etc/profile.d/devtoolset-11.sh
 SHELL ["/bin/bash", "--login", "-c"]
 
 FROM base_build AS vcpkg_build

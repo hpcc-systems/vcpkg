@@ -16,9 +16,9 @@ RUN yum update -y && yum install -y dnf-plugins-core && \
     yum-utils \
     zip 
 
-RUN yum -y install gcc-toolset-9-gcc gcc-toolset-9-gcc-c++ gcc-toolset-11-gcc gcc-toolset-11-gcc-c++
+RUN yum -y install gcc-toolset-11-gcc gcc-toolset-11-gcc-c++
 
-RUN echo "source /opt/rh/gcc-toolset-9/enable" >> /etc/bashrc
+RUN echo "source /opt/rh/gcc-toolset-11/enable" >> /etc/bashrc
 SHELL ["/bin/bash", "--login", "-c"]
 
 FROM base_build AS vcpkg_build

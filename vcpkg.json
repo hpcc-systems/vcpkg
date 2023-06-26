@@ -18,6 +18,7 @@
         "boost-property-tree",
         "boost-regex",
         "cpp-driver",
+        "cppunit",
         "cpr",
         "curl",
         {
@@ -42,7 +43,6 @@
             ]
         },
         "libcouchbase-cxx",
-        "libevent",
         "libgit2",
         {
             "name": "libiconv",
@@ -66,6 +66,7 @@
         },
         "libyaml",
         "lz4",
+        "minizip",
         "mongo-cxx-driver",
         "nlohmann-json",
         "nlp-engine",

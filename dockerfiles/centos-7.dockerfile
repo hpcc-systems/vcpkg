@@ -19,9 +19,9 @@ RUN yum update -y && yum install -y \
     yum-utils \
     zip 
 
-RUN yum install -y devtoolset-9  devtoolset-11
+RUN yum install -y devtoolset-11
 
-RUN echo "source /opt/rh/devtoolset-9/enable" >> /etc/bashrc
+RUN echo "source /opt/rh/devtoolset-11/enable" >> /etc/bashrc
 SHELL ["/bin/bash", "--login", "-c"]
 
 RUN curl -o pkg-config-0.29.2.tar.gz https://pkg-config.freedesktop.org/releases/pkg-config-0.29.2.tar.gz && \
