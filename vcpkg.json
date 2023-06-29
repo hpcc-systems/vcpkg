@@ -105,6 +105,13 @@
             "name": "winflexbison",
             "platform": "windows"
         },
-        "zlib"
+        "zlib",
+        {
+            "name": "opentelemetry-cpp",
+            "features": [
+                "otlp",
+                "otlp-http"
+            ]
+        }
     ]
 }
