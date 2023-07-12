@@ -79,5 +79,3 @@ jobs:
           tags: |
             hpccsystems/platform-build-base-${{ matrix.image }}:${{ steps.vars.outputs.sha_short }}
             hpccsystems/platform-build-base-${{ matrix.image }}:${{ steps.vars.outputs.vcpkg_tag }}
-          cache-from: type=registry,ref=hpccbuilds/platform-build-base-${{ matrix.image }}:${{ steps.vars.outputs.vcpkg_branch }}
-          cache-to: type=registry,ref=hpccbuilds/platform-build-base-${{ matrix.image }}:${{ steps.vars.outputs.vcpkg_branch }},mode=max
