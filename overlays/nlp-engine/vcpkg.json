@@ -1,6 +1,6 @@
 {
   "name": "nlp-engine",
-  "version-semver": "2.8.15",
+  "version-semver": "2.9.8",
   "port-version": 0,
   "homepage": "https://github.com/VisualText/nlp-engine",
   "description": "The NLP engine is a cross-platform text analysis tool that can be accessed through a command line executable or by calling its C++ functions from another language.",
