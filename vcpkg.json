@@ -95,6 +95,14 @@
         },
         "openssl",
         {
+            "name": "opentelemetry-cpp",
+            "features": [
+                "otlp",
+                "otlp-http",
+                "otlp-grpc"
+            ]
+        },
+        {
             "name": "python3",
             "platform": "windows"
         },
