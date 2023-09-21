@@ -122,6 +122,15 @@ jobs:
         run: |
           brew install pkg-config automake libtool autoconf autoconf-archive
 
+      - name: "Only run on windows"
+        if: ${{ startsWith(matrix.os, 'windows') }}
+        working-directory: ..
+        shell: pwsh
+        run: |
+          Remove-Item -Path "${{ github.workspace }}" -Recurse -Force
+          New-Item -ItemType Directory -Path "C:\workspace"
+          New-Item -ItemType SymbolicLink -Path "${{ github.workspace }}" -Target "C:\workspace"
+  
       - name: "Remove builtin vcpkg (old)"
         working-directory: .
         shell: "bash"

@@ -8,7 +8,7 @@ export $(grep -v '^#' $SCRIPT_DIR/../.env | xargs -d '\r' | xargs -d '\n') > /de
 GITHUB_ACTOR="${GITHUB_ACTOR:-hpcc-systems}"
 GITHUB_TOKEN="${GITHUB_TOKEN:-none}"
 GITHUB_REF=$(git rev-parse --short=8 HEAD)
-GITHUB_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+GITHUB_BRANCH=$(git branch --show-current)
 DOCKER_USERNAME="${DOCKER_USERNAME:-hpccbuilds}"
 DOCKER_PASSWORD="${DOCKER_PASSWORD:-none}"
 
@@ -20,25 +20,27 @@ echo "GITHUB_BRANCH: $GITHUB_BRANCH"
 echo "DOCKER_USERNAME: $DOCKER_USERNAME"
 echo "DOCKER_PASSWORD: $DOCKER_PASSWORD"
 
-# docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 
 function doBuild() {
-    docker build --progress plain -f "$SCRIPT_DIR/$1.dockerfile" \
+    docker build --progress plain --rm -f "$SCRIPT_DIR/$1.dockerfile" \
+        --build-arg NUGET_MODE=readwrite \
         --build-arg GITHUB_ACTOR=$GITHUB_ACTOR \
         --build-arg GITHUB_TOKEN=$GITHUB_TOKEN \
         -t hpccsystems/platform-build-base-$1:$GITHUB_REF \
         -t hpccsystems/platform-build-base-$1:$GITHUB_BRANCH \
+        --cache-from hpccsystems/platform-build-base-$1:$GITHUB_REF \
+        --cache-from hpccsystems/platform-build-base-$1:$GITHUB_BRANCH \
         "$SCRIPT_DIR/.."
-
-    # docker push hpccsystems/platform-build-base-$1:$GITHUB_REF
-    # docker push hpccsystems/platform-build-base-$1:latest
+    docker push hpccsystems/platform-build-base-$1:$GITHUB_REF
+    docker push hpccsystems/platform-build-base-$1:$GITHUB_BRANCH
 }
 
 doBuild centos-7 &
 doBuild centos-8 &
-doBuild amazonlinux &
-doBuild ubuntu-22.10 &
+doBuild ubuntu-23.04 &
 doBuild ubuntu-22.04 &
 doBuild ubuntu-20.04 &
+doBuild amazonlinux &
 
 wait
