@@ -22,7 +22,7 @@ jobs:
       matrix:
         image:
           [
-            "ubuntu-22.10",
+            "ubuntu-23.04",
             "ubuntu-22.04",
             "ubuntu-20.04",
             "centos-8",
@@ -34,6 +34,10 @@ jobs:
     name: "Docker:  ${{ matrix.image }}"
     runs-on: ubuntu-latest
     steps:
+      - name: Free additional disk space (remove Android SDK + Tools)
+        run: |
+          sudo rm -rf /usr/local/lib/android
+
       - name: Check out source code
         uses: actions/checkout@v3
         with:
@@ -79,3 +83,6 @@ jobs:
           tags: |
             hpccsystems/platform-build-base-${{ matrix.image }}:${{ steps.vars.outputs.sha_short }}
             hpccsystems/platform-build-base-${{ matrix.image }}:${{ steps.vars.outputs.vcpkg_tag }}
+          cache-from: |
+            type=registry,ref=hpccsystems/platform-build-base-${{ matrix.image }}:${{ steps.vars.outputs.sha_short }}
+            type=registry,ref=hpccsystems/platform-build-base-${{ matrix.image }}:${{ steps.vars.outputs.vcpkg_tag }}
