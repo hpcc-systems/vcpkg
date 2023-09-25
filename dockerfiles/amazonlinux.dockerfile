@@ -37,9 +37,8 @@ RUN ./configure --prefix=/usr/local/pkg_config/0_29_2 --with-internal-glib && \
     mkdir /usr/local/share/aclocal && \
     ln -s /usr/local/pkg_config/0_29_2/share/aclocal/pkg.m4 /usr/local/share/aclocal/
 
-ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
-ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
-ENV ACLOCAL_PATH=/usr/local/share/aclocal:$ACLOCAL_PATH
+ENV PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig
+ENV ACLOCAL_PATH=$ACLOCAL_PATH:/usr/local/share/aclocal
 
 RUN curl -o autoconf-2.71.tar.gz http://ftp.gnu.org/gnu/autoconf/autoconf-2.71.tar.gz && \
     gunzip autoconf-2.71.tar.gz && \

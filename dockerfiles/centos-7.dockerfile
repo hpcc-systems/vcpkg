@@ -17,7 +17,8 @@ RUN yum update -y && yum install -y \
     tar \
     unzip \
     yum-utils \
-    zip 
+    zip && \
+    yum -y clean all && rm -rf /var/cache
 
 RUN yum install -y devtoolset-11
 
@@ -34,9 +35,8 @@ RUN ./configure --prefix=/usr/local/pkg_config/0_29_2 --with-internal-glib && \
     mkdir /usr/local/share/aclocal && \
     ln -s /usr/local/pkg_config/0_29_2/share/aclocal/pkg.m4 /usr/local/share/aclocal/
 
-ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
-ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
-ENV ACLOCAL_PATH=/usr/local/share/aclocal:$ACLOCAL_PATH
+ENV PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig
+ENV ACLOCAL_PATH=$ACLOCAL_PATH:/usr/local/share/aclocal
 
 RUN curl -o autoconf-2.71.tar.gz http://ftp.gnu.org/gnu/autoconf/autoconf-2.71.tar.gz && \
     gunzip autoconf-2.71.tar.gz && \
@@ -92,12 +92,12 @@ RUN ln -s /usr/local/libtool/2_4_6/bin/libtool /usr/local/bin/ && \
 FROM base_build AS vcpkg_build
 
 # Build Tools - Mono  ---
-RUN yum-config-manager --add-repo http://download.mono-project.com/repo/centos/
-RUN yum clean all
-RUN yum makecache
-RUN rpm --import "http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
-
-RUN yum install -y mono-complete 
+RUN yum-config-manager --add-repo http://download.mono-project.com/repo/centos/ && \
+    yum clean all && \
+    yum makecache && \
+    rpm --import "http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF" && \
+    yum install -y mono-complete && \
+    yum -y clean all && rm -rf /var/cache
 
 ARG NUGET_MODE=readwrite
 ENV VCPKG_BINARY_SOURCES="clear;nuget,GitHub,${NUGET_MODE}"
