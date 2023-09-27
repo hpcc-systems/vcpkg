@@ -18,13 +18,17 @@ RUN yum update -y && yum install -y \
     python3 \
     tar \
     unzip \
-    zip
+    zip && \
+    yum -y clean all && rm -rf /var/cache
 
 RUN yum-config-manager --add-repo http://mirror.centos.org/centos/7/sclo/x86_64/rh/ && \
     LIBGFORTRAN5=libgfortran5-8.3.1-2.1.1.el7.x86_64.rpm && \
     wget http://mirror.centos.org/centos/7/os/x86_64/Packages/${LIBGFORTRAN5} && \
     yum install -y ${LIBGFORTRAN5} && \
     yum install -y devtoolset-11 --nogpgcheck
+
+RUN echo "source /opt/rh/devtoolset-11/enable" > /etc/profile.d/devtoolset-11.sh
+SHELL ["/bin/bash", "--login", "-c"]
 
 RUN yum install -y hostname xz && \
     curl -o pkg-config-0.29.2.tar.gz https://pkg-config.freedesktop.org/releases/pkg-config-0.29.2.tar.gz && \
@@ -91,18 +95,15 @@ RUN ln -s /usr/local/libtool/2_4_6/bin/libtool /usr/local/bin/ && \
 # ldconfig
 # ldconfig -v
 
-RUN echo "source /opt/rh/devtoolset-11/enable" > /etc/profile.d/devtoolset-11.sh
-SHELL ["/bin/bash", "--login", "-c"]
-
 FROM base_build AS vcpkg_build
 
 # Build Tools - Mono  ---
-RUN yum-config-manager --add-repo http://download.mono-project.com/repo/centos/
-RUN yum clean all
-RUN yum makecache
-RUN rpm --import "http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
-
-RUN yum install -y mono-complete 
+RUN yum-config-manager --add-repo http://download.mono-project.com/repo/centos/ && \
+    yum clean all && \
+    yum makecache && \
+    rpm --import "http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF" && \
+    yum install -y mono-complete && \
+    yum -y clean all && rm -rf /var/cache
 
 ARG NUGET_MODE=readwrite
 ENV VCPKG_BINARY_SOURCES="clear;nuget,GitHub,${NUGET_MODE}"
@@ -132,7 +133,8 @@ RUN mkdir /hpcc-dev/build
 RUN ./vcpkg install \
     --x-install-root=/hpcc-dev/build/vcpkg_installed \
     --overlay-ports=./overlays \
-    --triplet=x64-linux-dynamic
+    --overlay-triplets=./overlays \
+    --triplet=x64-amazonlinux-dynamic
 # ./vcpkg install --overlay-ports=./overlays --triplet=x64-linux-dynamic --x-install-root=/hpcc-dev/build/vcpkg_installed
 
 RUN mkdir -p /hpcc-dev/tools/cmake

@@ -127,7 +127,8 @@ RUN mkdir /hpcc-dev/build
 RUN ./vcpkg install \
     --x-install-root=/hpcc-dev/build/vcpkg_installed \
     --overlay-ports=./overlays \
-    --triplet=x64-linux-dynamic
+    --overlay-triplets=./overlays \
+    --triplet=x64-centos-7-dynamic
 # ./vcpkg install --overlay-ports=./overlays --triplet=x64-linux-dynamic --x-install-root=/hpcc-dev/build/vcpkg_installed
 
 RUN mkdir -p /hpcc-dev/tools/cmake
