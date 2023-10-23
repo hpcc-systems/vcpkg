@@ -13,6 +13,17 @@
                 "sqs"
             ]
         },
+        {
+            "name": "arrow",
+            "default-features": false,
+            "features": [
+                "acero",
+                "dataset",
+                "filesystem",
+                "parquet"
+            ],
+            "platform": "!(windows & x86)"
+        },
         "azure-storage-blobs-cpp",
         "azure-storage-files-shares-cpp",
         "boost-property-tree",
@@ -109,6 +120,7 @@
         "rapidjson",
         "sqlite3",
         "tbb",
+        "wasmtime-cpp-api",
         {
             "name": "winflexbison",
             "platform": "windows"
