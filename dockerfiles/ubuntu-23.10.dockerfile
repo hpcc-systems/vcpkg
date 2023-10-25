@@ -1,4 +1,4 @@
-FROM ubuntu:18.04 AS base_build
+FROM ubuntu:23.10 AS base_build
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -19,7 +19,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gnupg \
     groff-base \
     libtool \
-    linux-generic \
     pkg-config \
     software-properties-common \
     tar \
@@ -30,9 +29,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 FROM base_build AS vcpkg_build
 
 # Build Tools - Mono  ---
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-RUN sh -c 'echo "deb https://download.mono-project.com/repo/ubuntu stable-bionic main" > /etc/apt/sources.list.d/mono-official-stable.list'
-RUN apt-get update
 RUN apt-get install -y mono-complete
 
 ARG NUGET_MODE=readwrite

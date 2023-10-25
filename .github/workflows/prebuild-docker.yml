@@ -22,7 +22,7 @@ jobs:
       matrix:
         image:
           [
-            "ubuntu-23.04",
+            "ubuntu-23.10",
             "ubuntu-22.04",
             "ubuntu-20.04",
             "centos-8",
