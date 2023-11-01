@@ -74,6 +74,20 @@ RUN cp -r $(dirname $(dirname `./vcpkg fetch node | tail -n 1`))/* /hpcc-dev/too
 
 FROM base_build
 
+RUN apt-get update && apt-get install --no-install-recommends -y \
+    ccache \
+    default-jdk \
+    ninja-build \
+    python3-dev \
+    rsync \
+    fop \
+    libsaxonb-java \
+    r-base \
+    r-cran-rcpp \
+    r-cran-rinside \
+    r-cran-inline && \
+    git config --global --add safe.directory '*'
+
 WORKDIR /hpcc-dev
 
 COPY --from=vcpkg_build /hpcc-dev/build/vcpkg_installed /hpcc-dev/vcpkg_installed
@@ -86,3 +100,7 @@ RUN cp -rs /hpcc-dev/tools/cmake/bin /usr/local/ && \
     cp -rs /hpcc-dev/tools/node/include /usr/local/ && \
     cp -rs /hpcc-dev/tools/node/lib /usr/local/ && \
     cp -rs /hpcc-dev/tools/node/share /usr/local/
+
+ENTRYPOINT ["/bin/bash", "--login", "-c"]
+
+CMD ["/bin/bash"]

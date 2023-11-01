@@ -146,6 +146,16 @@ RUN cp -r $(dirname $(dirname `./vcpkg fetch node | tail -n 1`))/* /hpcc-dev/too
 
 FROM base_build
 
+RUN amazon-linux-extras install java-openjdk11 && yum install -y \
+    java-11-openjdk-devel \
+    python3-devel \
+    epel-release && \
+    yum install -y \
+    ccache \
+    R-core-devel \
+    R-Rcpp-devel \
+    R-RInside-devel
+
 WORKDIR /hpcc-dev
 
 COPY --from=vcpkg_build /hpcc-dev/build/vcpkg_installed /hpcc-dev/vcpkg_installed
@@ -158,3 +168,7 @@ RUN cp -rs /hpcc-dev/tools/cmake/bin /usr/local/ && \
     cp -rs /hpcc-dev/tools/node/include /usr/local/ && \
     cp -rs /hpcc-dev/tools/node/lib /usr/local/ && \
     cp -rs /hpcc-dev/tools/node/share /usr/local/
+
+ENTRYPOINT ["/bin/bash", "--login", "-c"]
+
+CMD ["/bin/bash"]
