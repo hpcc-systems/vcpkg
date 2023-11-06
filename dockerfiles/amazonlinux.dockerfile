@@ -18,7 +18,8 @@ RUN yum update -y && yum install -y \
     python3 \
     tar \
     unzip \
-    zip
+    zip && \
+    yum -y clean all && rm -rf /var/cache
 
 RUN yum-config-manager --add-repo http://mirror.centos.org/centos/7/sclo/x86_64/rh/ && \
     LIBGFORTRAN5=libgfortran5-8.3.1-2.1.1.el7.x86_64.rpm && \
@@ -98,12 +99,12 @@ RUN ln -s /usr/local/libtool/2_4_6/bin/libtool /usr/local/bin/ && \
 FROM base_build AS vcpkg_build
 
 # Build Tools - Mono  ---
-RUN yum-config-manager --add-repo http://download.mono-project.com/repo/centos/
-RUN yum clean all
-RUN yum makecache
-RUN rpm --import "http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
-
-RUN yum install -y mono-complete 
+RUN yum-config-manager --add-repo http://download.mono-project.com/repo/centos/ && \
+    yum clean all && \
+    yum makecache && \
+    rpm --import "http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF" && \
+    yum install -y mono-complete && \
+    yum -y clean all && rm -rf /var/cache
 
 ARG NUGET_MODE=readwrite
 ENV VCPKG_BINARY_SOURCES="clear;nuget,GitHub,${NUGET_MODE}"
@@ -145,6 +146,17 @@ RUN cp -r $(dirname $(dirname `./vcpkg fetch node | tail -n 1`))/* /hpcc-dev/too
 
 FROM base_build
 
+RUN amazon-linux-extras install java-openjdk11 && yum install -y \
+    java-11-openjdk-devel \
+    python3-devel \
+    epel-release && \
+    yum install -y \
+    ccache \
+    cppunit-devel \
+    R-core-devel \
+    R-Rcpp-devel \
+    R-RInside-devel
+
 WORKDIR /hpcc-dev
 
 COPY --from=vcpkg_build /hpcc-dev/build/vcpkg_installed /hpcc-dev/vcpkg_installed
@@ -157,3 +169,7 @@ RUN cp -rs /hpcc-dev/tools/cmake/bin /usr/local/ && \
     cp -rs /hpcc-dev/tools/node/include /usr/local/ && \
     cp -rs /hpcc-dev/tools/node/lib /usr/local/ && \
     cp -rs /hpcc-dev/tools/node/share /usr/local/
+
+ENTRYPOINT ["/bin/bash", "--login", "-c"]
+
+CMD ["/bin/bash"]

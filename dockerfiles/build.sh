@@ -38,7 +38,7 @@ function doBuild() {
 
 doBuild centos-7 &
 doBuild centos-8 &
-doBuild ubuntu-23.04 &
+doBuild ubuntu-23.10 &
 doBuild ubuntu-22.04 &
 doBuild ubuntu-20.04 &
 doBuild amazonlinux &

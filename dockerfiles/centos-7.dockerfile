@@ -17,7 +17,8 @@ RUN yum update -y && yum install -y \
     tar \
     unzip \
     yum-utils \
-    zip 
+    zip && \
+    yum -y clean all && rm -rf /var/cache
 
 RUN yum install -y devtoolset-9  devtoolset-11
 
@@ -92,12 +93,12 @@ RUN ln -s /usr/local/libtool/2_4_6/bin/libtool /usr/local/bin/ && \
 FROM base_build AS vcpkg_build
 
 # Build Tools - Mono  ---
-RUN yum-config-manager --add-repo http://download.mono-project.com/repo/centos/
-RUN yum clean all
-RUN yum makecache
-RUN rpm --import "http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
-
-RUN yum install -y mono-complete 
+RUN yum-config-manager --add-repo http://download.mono-project.com/repo/centos/ && \
+    yum clean all && \
+    yum makecache && \
+    rpm --import "http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF" && \
+    yum install -y mono-complete && \
+    yum -y clean all && rm -rf /var/cache
 
 ARG NUGET_MODE=readwrite
 ENV VCPKG_BINARY_SOURCES="clear;nuget,GitHub,${NUGET_MODE}"
@@ -139,6 +140,26 @@ RUN cp -r $(dirname $(dirname `./vcpkg fetch node | tail -n 1`))/* /hpcc-dev/too
 
 FROM base_build
 
+RUN yum makecache && yum install -y \
+    cppunit-devel \
+    epel-release \
+    java-11-openjdk-devel \
+    python3-devel \
+    wget && \
+    yum update -y && yum install -y \
+    cppunit-devel \
+    ccache \
+    R-core-devel && \
+    yum -y clean all && rm -rf /var/cache
+
+ENV Rcpp_package=Rcpp_0.12.19.tar.gz
+ENV RInside_package=RInside_0.2.12.tar.gz
+
+RUN wget https://cran.r-project.org/src/contrib/Archive/Rcpp/${Rcpp_package}
+RUN wget https://cran.r-project.org/src/contrib/Archive/RInside/${RInside_package}
+RUN R CMD INSTALL ${Rcpp_package} ${RInside_package}
+RUN rm -f ${Rcpp_package} ${RInside_package}
+
 WORKDIR /hpcc-dev
 
 COPY --from=vcpkg_build /hpcc-dev/build/vcpkg_installed /hpcc-dev/vcpkg_installed
@@ -151,3 +172,7 @@ RUN cp -rs /hpcc-dev/tools/cmake/bin /usr/local/ && \
     cp -rs /hpcc-dev/tools/node/include /usr/local/ && \
     cp -rs /hpcc-dev/tools/node/lib /usr/local/ && \
     cp -rs /hpcc-dev/tools/node/share /usr/local/
+
+ENTRYPOINT ["/bin/bash", "--login", "-c"]
+
+CMD ["/bin/bash"]

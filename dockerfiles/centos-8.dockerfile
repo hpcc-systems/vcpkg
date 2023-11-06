@@ -73,6 +73,17 @@ RUN cp -r $(dirname $(dirname `./vcpkg fetch node | tail -n 1`))/* /hpcc-dev/too
 
 FROM base_build
 
+RUN yum remove -y python3.11 java-1.* && yum install -y \
+    java-11-openjdk-devel \
+    python3-devel \
+    epel-release && \
+    yum update -y && yum install -y \
+    ccache \
+    cppunit-devel \
+    R-core-devel \
+    R-Rcpp-devel \
+    R-RInside-devel
+
 WORKDIR /hpcc-dev
 
 COPY --from=vcpkg_build /hpcc-dev/build/vcpkg_installed /hpcc-dev/vcpkg_installed
@@ -85,3 +96,7 @@ RUN cp -rs /hpcc-dev/tools/cmake/bin /usr/local/ && \
     cp -rs /hpcc-dev/tools/node/include /usr/local/ && \
     cp -rs /hpcc-dev/tools/node/lib /usr/local/ && \
     cp -rs /hpcc-dev/tools/node/share /usr/local/
+
+ENTRYPOINT ["/bin/bash", "--login", "-c"]
+
+CMD ["/bin/bash"]
