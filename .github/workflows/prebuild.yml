@@ -26,6 +26,12 @@ jobs:
       branch: refs/heads/hpcc-platform-9.4.x
     secrets: inherit
 
+  prebuild-eclide-9-4:
+    uses: hpcc-systems/vcpkg/.github/workflows/prebuild-gh_envs.yml@eclide-9.4.x
+    with:
+      branch: refs/heads/eclide-9.4.x
+    secrets: inherit
+
   prebuild-docker-9-2:
     uses: hpcc-systems/vcpkg/.github/workflows/prebuild-docker.yml@hpcc-platform-9.2.x
     with:
