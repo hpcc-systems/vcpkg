@@ -1,0 +1,93 @@
+name: Refresh GH environments NuGet cache
+
+env:
+  VCPKG_BINARY_SOURCES: "clear;nuget,GitHub,readwrite"
+
+on:
+  push:
+    branches:
+      - "eclide-9.4.x"
+
+  workflow_call:
+    inputs:
+      branch:
+        description: "The branch to build"
+        required: true
+        type: string
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        label:
+          [
+            "windows-2019-x86",
+            "windows-2022-x86"
+          ]
+        include:
+          - label: "windows-2019-x86"
+            os: "windows-2019"
+            triplet: "x86-windows"
+          - label: "windows-2022-x86"
+            os: "windows-2022"
+            triplet: "x86-windows"
+      fail-fast: false
+
+    name: "GH Environment - ${{ matrix.label }}"
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: "Only run on windows"
+        if: ${{ startsWith(matrix.os, 'windows') }}
+        working-directory: ..
+        shell: pwsh
+        run: |
+          Remove-Item -Path "${{ github.workspace }}" -Recurse -Force
+          New-Item -ItemType Directory -Path "C:\workspace"
+          New-Item -ItemType SymbolicLink -Path "${{ github.workspace }}" -Target "C:\workspace"
+  
+      - name: "Remove builtin vcpkg (old)"
+        working-directory: .
+        shell: "bash"
+        run: |
+          rm -rf "$VCPKG_INSTALLATION_ROOT"
+
+      - name: Check out source code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.branch || github.ref }}
+
+      - name: "Bootstrap vcpkg"
+        working-directory: .
+        shell: "bash"
+        run: |
+          ./bootstrap-vcpkg.sh
+
+      - name: "Setup NuGet Credentials"
+        working-directory: .
+        shell: "bash"
+        run: |
+          `./vcpkg fetch nuget | tail -n 1` \
+            sources add \
+            -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
+            -storepasswordincleartext \
+            -name "GitHub" \
+            -username "${{ github.repository_owner }}" \
+            -password "${{ secrets.GITHUB_TOKEN }}"
+          `./vcpkg fetch nuget | tail -n 1` \
+            setapikey "${{ secrets.GITHUB_TOKEN }}" \
+            -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+
+      - name: "Update nuget (overlays)"
+        shell: "bash"
+        run: |
+          ./vcpkg install --overlay-ports=./overlays --keep-going --triplet ${{ matrix.triplet }}
+
+      - name: Upload error logs
+        if: ${{ failure() || cancelled() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.os }}-logs
+          path: ./**/*.log
