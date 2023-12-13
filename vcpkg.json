@@ -1,0 +1,25 @@
+{
+    "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
+    "name": "eclide",
+    "version": "10.0.0",
+    "dependencies": [
+        "boost-crc",
+        "boost-asio",
+        "boost-date-time",
+        "boost-filesystem",
+        "boost-format",
+        "boost-multi-index",
+        "boost-program-options",
+        "boost-ptr-container",
+        "boost-random",
+        "boost-serialization",
+        "boost-signals2",
+        "boost-spirit",
+        "boost-thread",
+        "bugtrap",
+        "gsoap",
+        "scintilla",
+        "wtl",
+        "webview2"
+    ]
+}
