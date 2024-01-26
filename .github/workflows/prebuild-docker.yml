@@ -35,8 +35,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Free additional disk space (remove Android SDK + Tools)
+        continue-on-error: true
         run: |
+          df -h
           sudo rm -rf /usr/local/lib/android
+          sudo rm -rf ${JAVA_HOME_8_X64}
+          sudo rm -rf ${JAVA_HOME_11_X64}
+          sudo rm -rf ${JAVA_HOME_17_X64}
+          sudo rm -rf ${JAVA_HOME_21_X64}
+          sudo rm -rf ${CHROMEWEBDRIVER}
+          sudo rm -rf ${EDGEWEBDRIVER}
+          sudo rm -rf ${GECKOWEBDRIVER}
+          sudo rm -rf ${SELENIUM_JAR_PATH}
+          df -h
+
+      - name: Display disk space (post free)
+        run: |
+          df -h
 
       - name: Check out source code
         uses: actions/checkout@v3
