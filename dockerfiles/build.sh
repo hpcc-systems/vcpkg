@@ -37,13 +37,13 @@ function doBuild() {
         -t hpccsystems/platform-build-vcpkg-$1:$GITHUB_BRANCH \
         "$SCRIPT_DIR/.."
 
-    docker push "hpccsystems/platform-build-vcpkg-$1:$GITHUB_REF" &
-    docker push "hpccsystems/platform-build-vcpkg-$1:$GITHUB_BRANCH" & 
+    # docker push "hpccsystems/platform-build-vcpkg-$1:$GITHUB_REF" &
+    # docker push "hpccsystems/platform-build-vcpkg-$1:$GITHUB_BRANCH" & 
 
-    mkdir -p build-$1
-    docker run --rm --mount source="$(pwd)",target=/hpcc-dev/HPCC-Platform,type=bind,consistency=cached hpccsystems/platform-build-vcpkg-$1:$GITHUB_REF \
-       "rm -rf /hpcc-dev/HPCC-Platform/build-$1/vcpkg_installed || true && \
-        cp -r /hpcc-dev/vcpkg_installed /hpcc-dev/HPCC-Platform/build-$1"
+    # mkdir -p build-$1
+    # docker run --rm --mount source="$(pwd)",target=/hpcc-dev/HPCC-Platform,type=bind,consistency=cached hpccsystems/platform-build-vcpkg-$1:$GITHUB_REF \
+    #    "rm -rf /hpcc-dev/HPCC-Platform/build-$1/vcpkg_installed || true && \
+    #     cp -r /hpcc-dev/vcpkg_installed /hpcc-dev/HPCC-Platform/build-$1"
 
     # docker pull "hpccsystems/platform-build-base-$1:$GITHUB_REF" || true
     # docker pull "hpccsystems/platform-build-base-$1:$GITHUB_BRANCH" || true
@@ -62,9 +62,11 @@ function doBuild() {
     # docker push hpccsystems/platform-build-base-$1:$GITHUB_BRANCH
 }
 
+doBuild ubuntu-24.04
 # doBuild amazonlinux 
-doBuild centos-7 
+# doBuild centos-7 
 # doBuild centos-8 
+# doBuild ubuntu-24.04 &
 # doBuild ubuntu-23.04 &
 # doBuild ubuntu-22.04 &
 # doBuild ubuntu-20.04 &

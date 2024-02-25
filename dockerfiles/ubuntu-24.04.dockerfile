@@ -1,4 +1,4 @@
-FROM ubuntu:20.04 AS base_build
+FROM ubuntu:24.04 AS base_build
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -29,9 +29,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 FROM base_build AS vcpkg_build
 
 # Build Tools - Mono  ---
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-RUN sh -c 'echo "deb https://download.mono-project.com/repo/ubuntu stable-focal main" > /etc/apt/sources.list.d/mono-official-stable.list'
-RUN apt-get update
 RUN apt-get install -y mono-complete
 
 ARG NUGET_MODE=readwrite
@@ -74,18 +71,19 @@ RUN cp -r $(dirname $(dirname `./vcpkg fetch node | tail -n 1`))/* /hpcc-dev/too
 
 FROM base_build
 
-ENV RInside_package=RInside_0.2.14.tar.gz
-
 RUN apt-get update && apt-get install --no-install-recommends -y \
     ccache \
     default-jdk \
+    ninja-build \
     python3-dev \
-    wget \
+    rsync \
+    fop \
+    libsaxonb-java \
     r-base \
-    r-cran-rcpp && \
-    wget https://cran.r-project.org/src/contrib/Archive/RInside/${RInside_package} && \
-    R CMD INSTALL ${RInside_package} && \
-    rm -f ${RInside_package}
+    r-cran-rcpp \
+    r-cran-rinside \
+    r-cran-inline && \
+    git config --global --add safe.directory '*'
 
 WORKDIR /hpcc-dev
 

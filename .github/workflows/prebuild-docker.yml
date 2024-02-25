@@ -22,6 +22,7 @@ jobs:
       matrix:
         image:
           [
+            "ubuntu-24.04",
             "ubuntu-23.10",
             "ubuntu-22.04",
             "ubuntu-20.04",
@@ -32,7 +33,7 @@ jobs:
       fail-fast: false
 
     name: "Docker:  ${{ matrix.image }}"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Free additional disk space (remove Android SDK + Tools)
         continue-on-error: true
@@ -47,14 +48,17 @@ jobs:
           sudo rm -rf ${EDGEWEBDRIVER}
           sudo rm -rf ${GECKOWEBDRIVER}
           sudo rm -rf ${SELENIUM_JAR_PATH}
-          df -h
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
 
       - name: Display disk space (post free)
         run: |
           df -h
 
       - name: Check out source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ inputs.branch || github.ref }}
