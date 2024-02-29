@@ -1,9 +1,13 @@
+/build
 /buildtrees
 /dist
 /downloads
 /node_modules
 /packages
 /vcpkg-cache
+/vcpkg_buildtrees
+/vcpkg_downloads
+/vcpkg_packages
 /vcpkg_installed
 /vcpkg.exe
 /vcpkg
