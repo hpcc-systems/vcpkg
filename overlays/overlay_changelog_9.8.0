@@ -1,0 +1,7 @@
+Delete pcre2 overlay - ports/pcre2 microsoft 2024.05.24 set to same version
+delete libmysql - equivalent version found in ports/
+delete libxml - might have to revert - higher version in ports/
+delete libxslt - equivalent version found in ports/
+delete opentelemetry-cpp - Update version in ports/
+
+update baseline to f7423ee180c4b7f40d43402c2feb3859161ef625

@@ -6,7 +6,7 @@ env:
 on:
   push:
     branches:
-      - "hpcc-platform-9.6.x"
+      - "hpcc-platform-9.8.x"
 
   workflow_call:
     inputs:
