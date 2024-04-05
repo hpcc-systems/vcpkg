@@ -44,7 +44,7 @@ RUN ./configure --prefix=/usr/local/pkg_config/0_29_2 --with-internal-glib && \
 ENV PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig
 ENV ACLOCAL_PATH=$ACLOCAL_PATH:/usr/local/share/aclocal
 
-RUN curl -o autoconf-2.71.tar.gz http://ftp.gnu.org/gnu/autoconf/autoconf-2.71.tar.gz && \
+RUN curl -o autoconf-2.71.tar.gz https://ftp.gnu.org/gnu/autoconf/autoconf-2.71.tar.gz && \
     gunzip autoconf-2.71.tar.gz && \
     tar xvf autoconf-2.71.tar && \
     cd autoconf-2.71 && \
@@ -52,7 +52,7 @@ RUN curl -o autoconf-2.71.tar.gz http://ftp.gnu.org/gnu/autoconf/autoconf-2.71.t
     make && \
     make install
 
-RUN curl -o autoconf-archive-2021.02.19.tar.xz http://ftp.gnu.org/gnu/autoconf-archive/autoconf-archive-2021.02.19.tar.xz && \
+RUN curl -o autoconf-archive-2021.02.19.tar.xz https://ftp.gnu.org/gnu/autoconf-archive/autoconf-archive-2021.02.19.tar.xz && \
     xz -d -v autoconf-archive-2021.02.19.tar.xz && \
     tar xvf autoconf-archive-2021.02.19.tar && \
     cd autoconf-archive-2021.02.19 && \
@@ -60,14 +60,14 @@ RUN curl -o autoconf-archive-2021.02.19.tar.xz http://ftp.gnu.org/gnu/autoconf-a
     make && \
     make install
 
-RUN curl -o automake-1.16.5.tar.gz http://ftp.gnu.org/gnu/automake/automake-1.16.5.tar.gz && \
+RUN curl -o automake-1.16.5.tar.gz https://ftp.gnu.org/gnu/automake/automake-1.16.5.tar.gz && \
     tar xvzf automake-1.16.5.tar.gz && \
     cd automake-1.16.5 && \
     ./configure && \
     make && \
     make install
 
-RUN curl -o libtool-2.4.6.tar.gz http://ftp.jaist.ac.jp/pub/GNU/libtool/libtool-2.4.6.tar.gz && \
+RUN curl -o libtool-2.4.6.tar.gz https://ftp.jaist.ac.jp/pub/GNU/libtool/libtool-2.4.6.tar.gz && \
     tar xvfz libtool-2.4.6.tar.gz && \
     cd libtool-2.4.6 && \
     ./configure --prefix=/usr/local/libtool/2_4_6 && \
@@ -98,10 +98,10 @@ RUN ln -s /usr/local/libtool/2_4_6/bin/libtool /usr/local/bin/ && \
 FROM base_build AS vcpkg_build
 
 # Build Tools - Mono  ---
-RUN yum-config-manager --add-repo http://download.mono-project.com/repo/centos/ && \
+RUN yum-config-manager --add-repo https://download.mono-project.com/repo/centos/ && \
     yum clean all && \
     yum makecache && \
-    rpm --import "http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF" && \
+    rpm --import "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF" && \
     yum install -y mono-complete && \
     yum -y clean all && rm -rf /var/cache
 
@@ -133,6 +133,7 @@ RUN mkdir /hpcc-dev/build
 RUN ./vcpkg install \
     --x-abi-tools-use-exact-versions \
     --x-install-root=/hpcc-dev/build/vcpkg_installed \
+    --host-triplet=x64-amazonlinux-dynamic \
     --triplet=x64-amazonlinux-dynamic
 # ./vcpkg install --x-abi-tools-use-exact-versions --triplet=x64-amazonlinux-dynamic --x-install-root=/hpcc-dev/build/vcpkg_installed
 

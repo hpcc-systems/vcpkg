@@ -62,8 +62,9 @@ RUN mkdir /hpcc-dev/build
 RUN ./vcpkg install \
     --x-abi-tools-use-exact-versions \
     --x-install-root=/hpcc-dev/build/vcpkg_installed \
+    --host-triplet=x64-linux-dynamic \
     --triplet=x64-linux-dynamic
-# ./vcpkg install --x-abi-tools-use-exact-versions --triplet=x64-linux-dynamic --x-install-root=/hpcc-dev/build/vcpkg_installed
+# ./vcpkg install --x-abi-tools-use-exact-versions --host-triplet=x64-linux-dynamic --triplet=x64-linux-dynamic --x-install-root=/hpcc-dev/build/vcpkg_installed
 
 RUN mkdir -p /hpcc-dev/tools/cmake
 RUN cp -r $(dirname $(dirname `./vcpkg fetch cmake | tail -n 1`))/* /hpcc-dev/tools/cmake

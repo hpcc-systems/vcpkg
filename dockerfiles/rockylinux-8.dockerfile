@@ -14,6 +14,7 @@ RUN dnf install -y 'dnf-command(config-manager)' && \
     libtool \
     perl-IPC-Cmd \
     python3 \
+    rpm-build \
     tar \
     unzip \
     zip && \
@@ -28,8 +29,8 @@ FROM base_build AS vcpkg_build
 
 # Build Tools - Mono  ---
 RUN dnf install -y 'dnf-command(config-manager)'
-RUN rpmkeys --import "http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF" && \
-    dnf config-manager --add-repo http://download.mono-project.com/repo/centos8-stable/ && \
+RUN rpmkeys --import "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF" && \
+    dnf config-manager --add-repo https://download.mono-project.com/repo/centos8-stable/ && \
     dnf clean all && \
     dnf makecache && \
     dnf install -y mono-complete
@@ -62,6 +63,7 @@ RUN mkdir /hpcc-dev/build
 RUN ./vcpkg install \
     --x-abi-tools-use-exact-versions \
     --x-install-root=/hpcc-dev/build/vcpkg_installed \
+    --host-triplet=x64-linux-dynamic \
     --triplet=x64-linux-dynamic
 # ./vcpkg install --x-abi-tools-use-exact-versions --x-install-root=/hpcc-dev/build/vcpkg_installed --triplet=x64-linux-dynamic
 

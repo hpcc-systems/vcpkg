@@ -1,4 +1,7 @@
-FROM tgagor/centos-stream:stream8 AS base_build
+FROM tgagor/centos:stream8 AS base_build
+
+RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*.repo
+RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*.repo
 
 RUN yum update -y && yum install -y dnf-plugins-core && \
     dnf config-manager --set-enabled powertools && \
@@ -25,10 +28,10 @@ SHELL ["/bin/bash", "--login", "-c"]
 FROM base_build AS vcpkg_build
 
 # Build Tools - Mono  ---
-RUN yum-config-manager --add-repo http://download.mono-project.com/repo/centos/ && \
+RUN yum-config-manager --add-repo https://download.mono-project.com/repo/centos/ && \
     yum clean all && \
     yum makecache && \
-    rpm --import "http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF" && \
+    rpm --import "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF" && \
     dnf config-manager --add-repo https://download.mono-project.com/repo/centos8-stable.repo && \
     yum install -y mono-complete && \
     yum -y clean all && rm -rf /var/cache
@@ -61,6 +64,7 @@ RUN mkdir /hpcc-dev/build
 RUN ./vcpkg install \
     --x-abi-tools-use-exact-versions \
     --x-install-root=/hpcc-dev/build/vcpkg_installed \
+    --host-triplet=x64-linux-dynamic \
     --triplet=x64-linux-dynamic
 # ./vcpkg install --x-abi-tools-use-exact-versions --x-install-root=/hpcc-dev/build/vcpkg_installed --triplet=x64-linux-dynamic
 
