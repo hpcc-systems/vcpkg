@@ -12,70 +12,145 @@ on:
     - cron: "0 0,6,12,18 * * *"
 
   workflow_dispatch:
+    inputs:
+      branch:
+        type: choice
+        options:
+          - 'hpcc-platform-9.6.x'
+          - 'hpcc-platform-9.4.x'
+          - 'hpcc-platform-9.2.x'
+          - 'hpcc-platform-8.12.x'
+          - 'hpcc-platform-8.8.x'
+        description: 'Branch to build'
+        required: true
+        default: 'hpcc-platform-9.2.x'
+      os:
+        type: choice
+        options:
+          - 'ubuntu-24.04'
+          - 'ubuntu-22.04'
+          - 'ubuntu-20.04'
+          - 'rockylinux-8'
+          - 'centos-8'
+          - 'centos-7'
+          - 'amazonlinux'
+          - "windows-2019-x64"
+          - "windows-2019-x86"
+          - "windows-2022-x64"
+          - "windows-2022-x86"
+          - "macos-11-x64"
+          - "macos-12-x64"
+          - "macos-13-x64"
+        description: 'Operating System'
+        required: true
+        default: 'centos-7'
+
+      nuget_mode:
+        type: choice
+        options:
+          - 'read'
+          - 'write'
+          - 'readwrite'
+        description: 'NuGet mode'
+        required: true
+        default: 'write'
 
 jobs:
   prebuild-docker-9-6:
+    if: ${{ !contains('workflow_dispatch', github.event_name) || inputs.branch == 'hpcc-platform-9.6.x' }}
     uses: hpcc-systems/vcpkg/.github/workflows/prebuild-docker.yml@hpcc-platform-9.6.x
     with:
       branch: refs/heads/hpcc-platform-9.6.x
+      # os: ${{ inputs.os }}
+      # nuget_mode: ${{ inputs.nuget_mode }}
     secrets: inherit
 
   prebuild-gh_envs-9-6:
+    if: ${{ !contains('workflow_dispatch', github.event_name) || inputs.branch == 'hpcc-platform-9.6.x' }}
     uses: hpcc-systems/vcpkg/.github/workflows/prebuild-gh_envs.yml@hpcc-platform-9.6.x
     with:
       branch: refs/heads/hpcc-platform-9.6.x
+      # os: ${{ inputs.os }}
+      # nuget_mode: ${{ inputs.nuget_mode }}
     secrets: inherit
 
   prebuild-docker-9-4:
+    if: ${{ !contains('workflow_dispatch', github.event_name) || inputs.branch == 'hpcc-platform-9.4.x' }}
     uses: hpcc-systems/vcpkg/.github/workflows/prebuild-docker.yml@hpcc-platform-9.4.x
     with:
       branch: refs/heads/hpcc-platform-9.4.x
+      # os: ${{ inputs.os }}
+      # nuget_mode: ${{ inputs.nuget_mode }}
     secrets: inherit
 
   prebuild-gh_envs-9-4:
+    if: ${{ !contains('workflow_dispatch', github.event_name) || inputs.branch == 'hpcc-platform-9.4.x' }}
     uses: hpcc-systems/vcpkg/.github/workflows/prebuild-gh_envs.yml@hpcc-platform-9.4.x
     with:
       branch: refs/heads/hpcc-platform-9.4.x
+      # os: ${{ inputs.os }}
+      # nuget_mode: ${{ inputs.nuget_mode }}
     secrets: inherit
 
   prebuild-eclide-9-4:
+    if: ${{ !contains('workflow_dispatch', github.event_name) || inputs.branch == 'hpcc-platform-9.4.x' }}
     uses: hpcc-systems/vcpkg/.github/workflows/prebuild-gh_envs.yml@eclide-9.4.x
     with:
       branch: refs/heads/eclide-9.4.x
+      # os: ${{ inputs.os }}
+      # nuget_mode: ${{ inputs.nuget_mode }}
     secrets: inherit
 
   prebuild-docker-9-2:
+    if: ${{ !contains('workflow_dispatch', github.event_name) || inputs.branch == 'hpcc-platform-9.2.x' }}
     uses: hpcc-systems/vcpkg/.github/workflows/prebuild-docker.yml@hpcc-platform-9.2.x
     with:
       branch: refs/heads/hpcc-platform-9.2.x
+      # os: ${{ inputs.os }}
+      # nuget_mode: ${{ inputs.nuget_mode }}
     secrets: inherit
 
   prebuild-gh_envs-9-2:
+    if: ${{ !contains('workflow_dispatch', github.event_name) || inputs.branch == 'hpcc-platform-9.2.x' }}
     uses: hpcc-systems/vcpkg/.github/workflows/prebuild-gh_envs.yml@hpcc-platform-9.2.x
     with:
       branch: refs/heads/hpcc-platform-9.2.x
+      # os: ${{ inputs.os }}
+      # nuget_mode: ${{ inputs.nuget_mode }}
     secrets: inherit
 
   prebuild-docker-8-12:
+    if: ${{ !contains('workflow_dispatch', github.event_name) || inputs.branch == 'hpcc-platform-8.12.x' }}
     uses: hpcc-systems/vcpkg/.github/workflows/prebuild-docker.yml@hpcc-platform-8.12.x
     with:
       branch: refs/heads/hpcc-platform-8.12.x
+      # os: ${{ inputs.os }}
+      # nuget_mode: ${{ inputs.nuget_mode }}
     secrets: inherit
 
   prebuild-gh_envs-8-12:
+    if: ${{ !contains('workflow_dispatch', github.event_name) || inputs.branch == 'hpcc-platform-8.12.x' }}
     uses: hpcc-systems/vcpkg/.github/workflows/prebuild-gh_envs.yml@hpcc-platform-8.12.x
     with:
       branch: refs/heads/hpcc-platform-8.12.x
+      # os: ${{ inputs.os }}
+      # nuget_mode: ${{ inputs.nuget_mode }}
     secrets: inherit
 
   prebuild-docker-8-8:
+    if: ${{ !contains('workflow_dispatch', github.event_name) || inputs.branch == 'hpcc-platform-8.8.x' }}
     uses: hpcc-systems/vcpkg/.github/workflows/prebuild-docker.yml@hpcc-platform-8.8.x
     with:
       branch: refs/heads/hpcc-platform-8.8.x
+      # os: ${{ inputs.os }}
+      # nuget_mode: ${{ inputs.nuget_mode }}
     secrets: inherit
 
   prebuild-gh_envs-8-8:
+    if: ${{ !contains('workflow_dispatch', github.event_name) || inputs.branch == 'hpcc-platform-8.8.x' }}
     uses: hpcc-systems/vcpkg/.github/workflows/prebuild-gh_envs.yml@hpcc-platform-8.8.x
     with:
       branch: refs/heads/hpcc-platform-8.8.x
+      # os: ${{ inputs.os }}
+      # nuget_mode: ${{ inputs.nuget_mode }}
     secrets: inherit
