@@ -5,8 +5,8 @@ RUN yum update -y && yum install -y \
     centos-release-scl \
     https://packages.endpointdev.com/rhel/7/os/x86_64/endpoint-repo.x86_64.rpm && \
     yum group install -y "Development Tools" && yum install -y \
-    autoconf-archive \
     autoconf \
+    autoconf-archive \
     automake \
     curl \
     git \
@@ -128,7 +128,7 @@ RUN ./vcpkg install \
     --x-abi-tools-use-exact-versions \
     --x-install-root=/hpcc-dev/build/vcpkg_installed \
     --triplet=x64-centos-7-dynamic
-# ./vcpkg install --x-abi-tools-use-exact-versions --triplet=x64-centos-7-dynamic --x-install-root=/hpcc-dev/build/vcpkg_installed
+# ./vcpkg install --x-abi-tools-use-exact-versions --x-install-root=/hpcc-dev/build/vcpkg_installed --triplet=x64-centos-7-dynamic
 
 RUN mkdir -p /hpcc-dev/tools/cmake
 RUN cp -r $(dirname $(dirname `./vcpkg fetch cmake | tail -n 1`))/* /hpcc-dev/tools/cmake
@@ -152,10 +152,10 @@ RUN yum makecache && yum install -y \
 ENV Rcpp_package=Rcpp_0.12.19.tar.gz
 ENV RInside_package=RInside_0.2.12.tar.gz
 
-RUN wget https://cran.r-project.org/src/contrib/Archive/Rcpp/${Rcpp_package}
-RUN wget https://cran.r-project.org/src/contrib/Archive/RInside/${RInside_package}
-RUN R CMD INSTALL ${Rcpp_package} ${RInside_package}
-RUN rm -f ${Rcpp_package} ${RInside_package}
+RUN wget https://cran.r-project.org/src/contrib/Archive/Rcpp/${Rcpp_package} && \
+    wget https://cran.r-project.org/src/contrib/Archive/RInside/${RInside_package} && \
+    R CMD INSTALL ${Rcpp_package} ${RInside_package} && \
+    rm -f ${Rcpp_package} ${RInside_package}
 
 WORKDIR /hpcc-dev
 

@@ -128,21 +128,6 @@ jobs:
         run: |
           brew install bison flex pkg-config automake libtool autoconf autoconf-archive
 
-      - name: "Only run on windows"
-        if: ${{ startsWith(matrix.os, 'windows') }}
-        working-directory: ..
-        shell: pwsh
-        run: |
-          Remove-Item -Path "${{ github.workspace }}" -Recurse -Force
-          New-Item -ItemType Directory -Path "C:\workspace"
-          New-Item -ItemType SymbolicLink -Path "${{ github.workspace }}" -Target "C:\workspace"
-  
-      - name: "Remove builtin vcpkg (old)"
-        working-directory: .
-        shell: "bash"
-        run: |
-          ${{ matrix.sudo }} rm -rf "$VCPKG_INSTALLATION_ROOT"
-
       - name: Check out source code
         uses: actions/checkout@v3
         with:
@@ -171,9 +156,12 @@ jobs:
             -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
 
       - name: "Update nuget (overlays)"
+        working-directory: .
         shell: "bash"
         run: |
-          ./vcpkg install --overlay-ports=./overlays --keep-going --triplet ${{ matrix.triplet }}
+          ./vcpkg install \
+            --x-abi-tools-use-exact-versions \
+            --triplet=${{ matrix.triplet }}
 
       - name: Upload error logs
         if: ${{ failure() || cancelled() }}
