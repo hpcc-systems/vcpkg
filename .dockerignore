@@ -1,5 +1,4 @@
 *
-**/*
 
 #  Folders
 !overlays
@@ -14,4 +13,5 @@
 !bootstrap-vcpkg.sh
 !LICENSE.txt
 !shell.nix
+!vcpkg-configuration.json
 !vcpkg.json

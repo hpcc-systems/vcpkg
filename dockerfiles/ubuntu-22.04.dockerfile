@@ -60,10 +60,10 @@ RUN mono `./vcpkg fetch nuget | tail -n 1` \
 # vcpkg  ---
 RUN mkdir /hpcc-dev/build
 RUN ./vcpkg install \
+    --x-abi-tools-use-exact-versions \
     --x-install-root=/hpcc-dev/build/vcpkg_installed \
-    --overlay-ports=./overlays \
     --triplet=x64-linux-dynamic
-# ./vcpkg install --overlay-ports=./overlays --triplet=x64-linux-dynamic --x-install-root=/hpcc-dev/build/vcpkg_installed
+# ./vcpkg install --x-abi-tools-use-exact-versions --triplet=x64-linux-dynamic --x-install-root=/hpcc-dev/build/vcpkg_installed
 
 RUN mkdir -p /hpcc-dev/tools/cmake
 RUN cp -r $(dirname $(dirname `./vcpkg fetch cmake | tail -n 1`))/* /hpcc-dev/tools/cmake
@@ -73,6 +73,20 @@ RUN mkdir -p /hpcc-dev/tools/node
 RUN cp -r $(dirname $(dirname `./vcpkg fetch node | tail -n 1`))/* /hpcc-dev/tools/node
 
 FROM base_build
+
+RUN apt-get update && apt-get install --no-install-recommends -y \
+    ccache \
+    default-jdk \
+    ninja-build \
+    python3-dev \
+    rsync \
+    fop \
+    libsaxonb-java \
+    r-base \
+    r-cran-rcpp \
+    r-cran-rinside \
+    r-cran-inline && \
+    git config --global --add safe.directory '*'
 
 WORKDIR /hpcc-dev
 
@@ -86,3 +100,7 @@ RUN cp -rs /hpcc-dev/tools/cmake/bin /usr/local/ && \
     cp -rs /hpcc-dev/tools/node/include /usr/local/ && \
     cp -rs /hpcc-dev/tools/node/lib /usr/local/ && \
     cp -rs /hpcc-dev/tools/node/share /usr/local/
+
+ENTRYPOINT ["/bin/bash", "--login", "-c"]
+
+CMD ["/bin/bash"]

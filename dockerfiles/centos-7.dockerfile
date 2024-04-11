@@ -5,8 +5,8 @@ RUN yum update -y && yum install -y \
     centos-release-scl \
     https://packages.endpointdev.com/rhel/7/os/x86_64/endpoint-repo.x86_64.rpm && \
     yum group install -y "Development Tools" && yum install -y \
-    autoconf-archive \
     autoconf \
+    autoconf-archive \
     automake \
     curl \
     git \
@@ -17,7 +17,8 @@ RUN yum update -y && yum install -y \
     tar \
     unzip \
     yum-utils \
-    zip 
+    zip && \
+    yum -y clean all && rm -rf /var/cache
 
 RUN yum install -y devtoolset-11
 
@@ -34,9 +35,8 @@ RUN ./configure --prefix=/usr/local/pkg_config/0_29_2 --with-internal-glib && \
     mkdir /usr/local/share/aclocal && \
     ln -s /usr/local/pkg_config/0_29_2/share/aclocal/pkg.m4 /usr/local/share/aclocal/
 
-ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
-ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
-ENV ACLOCAL_PATH=/usr/local/share/aclocal:$ACLOCAL_PATH
+ENV PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig
+ENV ACLOCAL_PATH=$ACLOCAL_PATH:/usr/local/share/aclocal
 
 RUN curl -o autoconf-2.71.tar.gz http://ftp.gnu.org/gnu/autoconf/autoconf-2.71.tar.gz && \
     gunzip autoconf-2.71.tar.gz && \
@@ -92,12 +92,12 @@ RUN ln -s /usr/local/libtool/2_4_6/bin/libtool /usr/local/bin/ && \
 FROM base_build AS vcpkg_build
 
 # Build Tools - Mono  ---
-RUN yum-config-manager --add-repo http://download.mono-project.com/repo/centos/
-RUN yum clean all
-RUN yum makecache
-RUN rpm --import "http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
-
-RUN yum install -y mono-complete 
+RUN yum-config-manager --add-repo http://download.mono-project.com/repo/centos/ && \
+    yum clean all && \
+    yum makecache && \
+    rpm --import "http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF" && \
+    yum install -y mono-complete && \
+    yum -y clean all && rm -rf /var/cache
 
 ARG NUGET_MODE=readwrite
 ENV VCPKG_BINARY_SOURCES="clear;nuget,GitHub,${NUGET_MODE}"
@@ -125,10 +125,10 @@ RUN mono `./vcpkg fetch nuget | tail -n 1` \
 # vcpkg  ---
 RUN mkdir /hpcc-dev/build
 RUN ./vcpkg install \
+    --x-abi-tools-use-exact-versions \
     --x-install-root=/hpcc-dev/build/vcpkg_installed \
-    --overlay-ports=./overlays \
-    --triplet=x64-linux-dynamic
-# ./vcpkg install --overlay-ports=./overlays --triplet=x64-linux-dynamic --x-install-root=/hpcc-dev/build/vcpkg_installed
+    --triplet=x64-centos-7-dynamic
+# ./vcpkg install --x-abi-tools-use-exact-versions --x-install-root=/hpcc-dev/build/vcpkg_installed --triplet=x64-centos-7-dynamic
 
 RUN mkdir -p /hpcc-dev/tools/cmake
 RUN cp -r $(dirname $(dirname `./vcpkg fetch cmake | tail -n 1`))/* /hpcc-dev/tools/cmake
@@ -138,6 +138,24 @@ RUN mkdir -p /hpcc-dev/tools/node
 RUN cp -r $(dirname $(dirname `./vcpkg fetch node | tail -n 1`))/* /hpcc-dev/tools/node
 
 FROM base_build
+
+RUN yum makecache && yum install -y \
+    epel-release \
+    java-11-openjdk-devel \
+    python3-devel \
+    wget && \
+    yum update -y && yum install -y \
+    ccache \
+    R-core-devel && \
+    yum -y clean all && rm -rf /var/cache
+
+ENV Rcpp_package=Rcpp_0.12.19.tar.gz
+ENV RInside_package=RInside_0.2.12.tar.gz
+
+RUN wget https://cran.r-project.org/src/contrib/Archive/Rcpp/${Rcpp_package} && \
+    wget https://cran.r-project.org/src/contrib/Archive/RInside/${RInside_package} && \
+    R CMD INSTALL ${Rcpp_package} ${RInside_package} && \
+    rm -f ${Rcpp_package} ${RInside_package}
 
 WORKDIR /hpcc-dev
 
@@ -151,3 +169,7 @@ RUN cp -rs /hpcc-dev/tools/cmake/bin /usr/local/ && \
     cp -rs /hpcc-dev/tools/node/include /usr/local/ && \
     cp -rs /hpcc-dev/tools/node/lib /usr/local/ && \
     cp -rs /hpcc-dev/tools/node/share /usr/local/
+
+ENTRYPOINT ["/bin/bash", "--login", "-c"]
+
+CMD ["/bin/bash"]

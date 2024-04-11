@@ -6,15 +6,16 @@ RUN yum update -y && yum install -y dnf-plugins-core && \
     autoconf \
     autoconf-archive \
     automake \
-    git \
     curl \
+    git \
     libtool \
     perl-IPC-Cmd \
     python3 \
-    unzip \
     tar \
+    unzip \
     yum-utils \
-    zip 
+    zip && \
+    yum -y clean all && rm -rf /var/cache
 
 RUN yum -y install gcc-toolset-11-gcc gcc-toolset-11-gcc-c++
 
@@ -24,14 +25,13 @@ SHELL ["/bin/bash", "--login", "-c"]
 FROM base_build AS vcpkg_build
 
 # Build Tools - Mono  ---
-RUN yum-config-manager --add-repo http://download.mono-project.com/repo/centos/
-RUN yum clean all
-RUN yum makecache
-RUN rpm --import "http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
-
-RUN dnf config-manager --add-repo https://download.mono-project.com/repo/centos8-stable.repo
-
-RUN dnf install -y mono-complete 
+RUN yum-config-manager --add-repo http://download.mono-project.com/repo/centos/ && \
+    yum clean all && \
+    yum makecache && \
+    rpm --import "http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF" && \
+    dnf config-manager --add-repo https://download.mono-project.com/repo/centos8-stable.repo && \
+    yum install -y mono-complete && \
+    yum -y clean all && rm -rf /var/cache
 
 ARG NUGET_MODE=readwrite
 ENV VCPKG_BINARY_SOURCES="clear;nuget,GitHub,${NUGET_MODE}"
@@ -59,10 +59,10 @@ RUN mono `./vcpkg fetch nuget | tail -n 1` \
 # vcpkg  ---
 RUN mkdir /hpcc-dev/build
 RUN ./vcpkg install \
+    --x-abi-tools-use-exact-versions \
     --x-install-root=/hpcc-dev/build/vcpkg_installed \
-    --overlay-ports=./overlays \
     --triplet=x64-linux-dynamic
-# ./vcpkg install --overlay-ports=./overlays --triplet=x64-linux-dynamic --x-install-root=/hpcc-dev/build/vcpkg_installed
+# ./vcpkg install --x-abi-tools-use-exact-versions --x-install-root=/hpcc-dev/build/vcpkg_installed --triplet=x64-linux-dynamic
 
 RUN mkdir -p /hpcc-dev/tools/cmake
 RUN cp -r $(dirname $(dirname `./vcpkg fetch cmake | tail -n 1`))/* /hpcc-dev/tools/cmake
@@ -72,6 +72,17 @@ RUN mkdir -p /hpcc-dev/tools/node
 RUN cp -r $(dirname $(dirname `./vcpkg fetch node | tail -n 1`))/* /hpcc-dev/tools/node
 
 FROM base_build
+
+RUN yum remove -y python3.11 java-1.* && yum install -y \
+    java-11-openjdk-devel \
+    python3-devel \
+    epel-release && \
+    yum update -y && yum install -y \
+    ccache \
+    R-core-devel \
+    R-Rcpp-devel \
+    R-RInside-devel && \
+    yum -y clean all && rm -rf /var/cache
 
 WORKDIR /hpcc-dev
 
@@ -85,3 +96,7 @@ RUN cp -rs /hpcc-dev/tools/cmake/bin /usr/local/ && \
     cp -rs /hpcc-dev/tools/node/include /usr/local/ && \
     cp -rs /hpcc-dev/tools/node/lib /usr/local/ && \
     cp -rs /hpcc-dev/tools/node/share /usr/local/
+
+ENTRYPOINT ["/bin/bash", "--login", "-c"]
+
+CMD ["/bin/bash"]

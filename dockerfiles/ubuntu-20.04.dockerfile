@@ -60,10 +60,10 @@ RUN mono `./vcpkg fetch nuget | tail -n 1` \
 # vcpkg  ---
 RUN mkdir /hpcc-dev/build
 RUN ./vcpkg install \
+    --x-abi-tools-use-exact-versions \
     --x-install-root=/hpcc-dev/build/vcpkg_installed \
-    --overlay-ports=./overlays \
     --triplet=x64-linux-dynamic
-# ./vcpkg install --overlay-ports=./overlays --triplet=x64-linux-dynamic --x-install-root=/hpcc-dev/build/vcpkg_installed
+# ./vcpkg install --x-abi-tools-use-exact-versions --triplet=x64-linux-dynamic --x-install-root=/hpcc-dev/build/vcpkg_installed
 
 RUN mkdir -p /hpcc-dev/tools/cmake
 RUN cp -r $(dirname $(dirname `./vcpkg fetch cmake | tail -n 1`))/* /hpcc-dev/tools/cmake
@@ -73,6 +73,19 @@ RUN mkdir -p /hpcc-dev/tools/node
 RUN cp -r $(dirname $(dirname `./vcpkg fetch node | tail -n 1`))/* /hpcc-dev/tools/node
 
 FROM base_build
+
+ENV RInside_package=RInside_0.2.14.tar.gz
+
+RUN apt-get update && apt-get install --no-install-recommends -y \
+    ccache \
+    default-jdk \
+    python3-dev \
+    wget \
+    r-base \
+    r-cran-rcpp && \
+    wget https://cran.r-project.org/src/contrib/Archive/RInside/${RInside_package} && \
+    R CMD INSTALL ${RInside_package} && \
+    rm -f ${RInside_package}
 
 WORKDIR /hpcc-dev
 
@@ -86,3 +99,7 @@ RUN cp -rs /hpcc-dev/tools/cmake/bin /usr/local/ && \
     cp -rs /hpcc-dev/tools/node/include /usr/local/ && \
     cp -rs /hpcc-dev/tools/node/lib /usr/local/ && \
     cp -rs /hpcc-dev/tools/node/share /usr/local/
+
+ENTRYPOINT ["/bin/bash", "--login", "-c"]
+
+CMD ["/bin/bash"]
