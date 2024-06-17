@@ -1,4 +1,7 @@
-FROM tgagor/centos-stream:stream8 AS base_build
+FROM tgagor/centos:stream8 AS base_build
+
+RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*.repo
+RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*.repo
 
 RUN yum update -y && yum install -y dnf-plugins-core && \
     dnf config-manager --set-enabled powertools && \
