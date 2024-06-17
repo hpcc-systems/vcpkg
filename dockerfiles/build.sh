@@ -65,7 +65,8 @@ function doBuild() {
 # doBuild ubuntu-24.04
 # doBuild amazonlinux 
 # doBuild centos-7 &
-doBuild rockylinux-8 &
+doBuild centos-8 &
+# doBuild rockylinux-8 &
 # doBuild ubuntu-24.04 &
 # doBuild ubuntu-23.04 &
 # doBuild ubuntu-22.04 &
