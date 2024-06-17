@@ -2,6 +2,7 @@
 /buildtrees
 /dist
 /downloads
+/installed
 /node_modules
 /packages
 /vcpkg-cache
