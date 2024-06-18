@@ -143,6 +143,7 @@ jobs:
         run: |
           ./vcpkg install \
             --x-abi-tools-use-exact-versions \
+            --host-triplet=${{ matrix.triplet }} \
             --triplet=${{ matrix.triplet }}
 
       - name: Upload error logs

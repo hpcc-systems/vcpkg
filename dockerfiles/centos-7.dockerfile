@@ -127,6 +127,7 @@ RUN mkdir /hpcc-dev/build
 RUN ./vcpkg install \
     --x-abi-tools-use-exact-versions \
     --x-install-root=/hpcc-dev/build/vcpkg_installed \
+    --host-triplet=x64-centos-7-dynamic \
     --triplet=x64-centos-7-dynamic
 # ./vcpkg install --x-abi-tools-use-exact-versions --x-install-root=/hpcc-dev/build/vcpkg_installed --triplet=x64-centos-7-dynamic
 

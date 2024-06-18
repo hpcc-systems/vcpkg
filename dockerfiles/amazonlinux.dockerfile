@@ -133,6 +133,7 @@ RUN mkdir /hpcc-dev/build
 RUN ./vcpkg install \
     --x-abi-tools-use-exact-versions \
     --x-install-root=/hpcc-dev/build/vcpkg_installed \
+    --host-triplet=x64-amazonlinux-dynamic \
     --triplet=x64-amazonlinux-dynamic
 # ./vcpkg install --x-abi-tools-use-exact-versions --triplet=x64-amazonlinux-dynamic --x-install-root=/hpcc-dev/build/vcpkg_installed
 
