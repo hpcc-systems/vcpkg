@@ -8,6 +8,7 @@ The default branch is "main" which is empty except for a github action that preb
 
 The following branches are active and correspond to the HPCC-Platform development branches:
 
+* [hpcc-platform-9.8.x](https://github.com/hpcc-systems/vcpkg/tree/hpcc-platform-9.8.x)
 * [hpcc-platform-9.6.x](https://github.com/hpcc-systems/vcpkg/tree/hpcc-platform-9.6.x)
 * [hpcc-platform-9.4.x](https://github.com/hpcc-systems/vcpkg/tree/hpcc-platform-9.4.x)
 * [hpcc-platform-9.2.x](https://github.com/hpcc-systems/vcpkg/tree/hpcc-platform-9.2.x)
