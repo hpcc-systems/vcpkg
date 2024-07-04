@@ -29,7 +29,6 @@ jobs:
             "windows-2019-x86",
             "windows-2022-x64",
             "windows-2022-x86",
-            "macos-11-x64",
             "macos-12-x64",
             "macos-13-x64"
           ]
@@ -64,11 +63,6 @@ jobs:
             triplet: "x86-windows"
             mono: ""
             sudo: ""
-          - label: "macos-11-x64"
-            os: "macos-11"
-            triplet: "x64-osx"
-            mono: "mono"
-            sudo: "sudo"
           - label: "macos-12-x64"
             os: "macos-12"
             triplet: "x64-osx"
