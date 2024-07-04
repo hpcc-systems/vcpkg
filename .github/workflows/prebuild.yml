@@ -9,7 +9,7 @@ on:
       - "main"
 
   schedule:
-    - cron: "0 0,6,12,18 * * *"
+    - cron: "0 8 * * *"
 
   workflow_dispatch:
     inputs:
@@ -33,18 +33,15 @@ on:
           - 'ubuntu-20.04'
           - 'rockylinux-8'
           - 'centos-8'
-          - 'centos-7'
-          - 'amazonlinux'
           - "windows-2019-x64"
           - "windows-2019-x86"
           - "windows-2022-x64"
           - "windows-2022-x86"
-          - "macos-11-x64"
           - "macos-12-x64"
           - "macos-13-x64"
         description: 'Operating System'
         required: true
-        default: 'centos-7'
+        default: 'rockylinux-8'
 
       nuget_mode:
         type: choice
@@ -152,24 +149,6 @@ jobs:
     uses: hpcc-systems/vcpkg/.github/workflows/prebuild-gh_envs.yml@hpcc-platform-8.12.x
     with:
       branch: refs/heads/hpcc-platform-8.12.x
-      # os: ${{ inputs.os }}
-      # nuget_mode: ${{ inputs.nuget_mode }}
-    secrets: inherit
-
-  prebuild-docker-8-8:
-    if: ${{ !contains('workflow_dispatch', github.event_name) || inputs.branch == 'hpcc-platform-8.8.x' }}
-    uses: hpcc-systems/vcpkg/.github/workflows/prebuild-docker.yml@hpcc-platform-8.8.x
-    with:
-      branch: refs/heads/hpcc-platform-8.8.x
-      # os: ${{ inputs.os }}
-      # nuget_mode: ${{ inputs.nuget_mode }}
-    secrets: inherit
-
-  prebuild-gh_envs-8-8:
-    if: ${{ !contains('workflow_dispatch', github.event_name) || inputs.branch == 'hpcc-platform-8.8.x' }}
-    uses: hpcc-systems/vcpkg/.github/workflows/prebuild-gh_envs.yml@hpcc-platform-8.8.x
-    with:
-      branch: refs/heads/hpcc-platform-8.8.x
       # os: ${{ inputs.os }}
       # nuget_mode: ${{ inputs.nuget_mode }}
     secrets: inherit
