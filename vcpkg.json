@@ -122,6 +122,10 @@
         "rapidjson",
         "sqlite3",
         "tbb",
+        {
+            "name": "thrift",
+            "version>=": "0.20.0#1"
+        },
         "wasmtime-cpp-api",
         {
             "name": "winflexbison",
