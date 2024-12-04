@@ -27,7 +27,6 @@ jobs:
             "ubuntu-22.04-x64",
             "windows-2019-x64",
             "windows-2022-x64",
-            "macos-12-x64",
             "macos-13-x64"
           ]
         include:
@@ -51,11 +50,6 @@ jobs:
             triplet: "x64-windows"
             mono: ""
             sudo: ""
-          - label: "macos-12-x64"
-            os: "macos-12"
-            triplet: "x64-osx"
-            mono: "mono"
-            sudo: "sudo"
           - label: "macos-13-x64"
             os: "macos-13"
             triplet: "x64-osx"
@@ -105,7 +99,7 @@ jobs:
           sudo apt-get -yq install -f mono-complete
 
       - name: OSX Dependencies
-        if: ${{ matrix.os == 'macos-12' || matrix.os == 'macos-13' }}
+        if: ${{ matrix.os == 'macos-13' || matrix.os == 'macos-14' }}
         shell: "bash"
         run: |
           brew install bison flex pkg-config automake libtool autoconf autoconf-archive coreutils
@@ -136,6 +130,14 @@ jobs:
           ${{ matrix.mono }} `./vcpkg fetch nuget | tail -n 1` \
             setapikey "${{ secrets.GITHUB_TOKEN }}" \
             -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+
+      - name: "Windows 2022 Manifest"
+        if: ${{ matrix.os == 'windows-2022' }}
+        working-directory: .
+        shell: "bash"
+        run: |
+          rm ./vcpkg.json
+          mv ./vcpkg-win2022.json ./vcpkg.json
 
       - name: "Update nuget (overlays)"
         working-directory: .
