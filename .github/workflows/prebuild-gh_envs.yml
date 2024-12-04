@@ -29,7 +29,6 @@ jobs:
             "windows-2019-x86",
             "windows-2022-x64",
             "windows-2022-x86",
-            "macos-12-x64",
             "macos-13-x64"
           ]
         include:
@@ -63,11 +62,6 @@ jobs:
             triplet: "x86-windows"
             mono: ""
             sudo: ""
-          - label: "macos-12-x64"
-            os: "macos-12"
-            triplet: "x64-osx"
-            mono: "mono"
-            sudo: "sudo"
           - label: "macos-13-x64"
             os: "macos-13"
             triplet: "x64-osx"
@@ -117,7 +111,7 @@ jobs:
           sudo apt-get -yq install -f mono-complete
 
       - name: OSX Dependencies
-        if: ${{ matrix.os == 'macos-11' || matrix.os == 'macos-12' || matrix.os == 'macos-13' }}
+        if: ${{ matrix.os == 'macos-13' || matrix.os == 'macos-14' }}
         shell: "bash"
         run: |
           brew install bison flex pkg-config automake libtool autoconf autoconf-archive
