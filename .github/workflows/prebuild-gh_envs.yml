@@ -29,7 +29,6 @@ jobs:
             "windows-2019-x86",
             "windows-2022-x64",
             "windows-2022-x86",
-            "macos-12-x64"
           ]
         include:
           - label: "ubuntu-20.04-x64"
@@ -62,11 +61,6 @@ jobs:
             triplet: "x86-windows"
             mono: ""
             sudo: ""
-          - label: "macos-12-x64"
-            os: "macos-12"
-            triplet: "x64-osx"
-            mono: "mono"
-            sudo: "sudo"
       fail-fast: false
 
     name: "GH Environment - ${{ matrix.label }}"
