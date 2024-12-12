@@ -27,8 +27,8 @@ jobs:
             "ubuntu-22.04-x64",
             "windows-2019-x64",
             "windows-2022-x64",
-            "macos-12-x64",
-            "macos-13-x64"
+            "macos-13-x64",
+            "macos-14-arm64"
           ]
         include:
           - label: "ubuntu-20.04-x64"
@@ -51,14 +51,14 @@ jobs:
             triplet: "x64-windows"
             mono: ""
             sudo: ""
-          - label: "macos-12-x64"
-            os: "macos-12"
-            triplet: "x64-osx"
-            mono: "mono"
-            sudo: "sudo"
           - label: "macos-13-x64"
             os: "macos-13"
             triplet: "x64-osx"
+            mono: "mono"
+            sudo: "sudo"
+          - label: "macos-14-arm64"
+            os: "macos-14"
+            triplet: "arm64-osx"
             mono: "mono"
             sudo: "sudo"
       fail-fast: false
@@ -105,7 +105,7 @@ jobs:
           sudo apt-get -yq install -f mono-complete
 
       - name: OSX Dependencies
-        if: ${{ matrix.os == 'macos-12' || matrix.os == 'macos-13' }}
+        if: ${{ matrix.os == 'macos-13' || matrix.os == 'macos-14' }}
         shell: "bash"
         run: |
           brew install bison flex pkg-config automake libtool autoconf autoconf-archive coreutils
@@ -137,6 +137,14 @@ jobs:
             setapikey "${{ secrets.GITHUB_TOKEN }}" \
             -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
 
+      - name: "Windows 2022 Manifest"
+        if: ${{ matrix.os == 'windows-2022' }}
+        working-directory: .
+        shell: "bash"
+        run: |
+          rm ./vcpkg.json
+          mv ./vcpkg-win2022.json ./vcpkg.json
+
       - name: "Update nuget (overlays)"
         working-directory: .
         shell: "bash"
@@ -145,6 +153,7 @@ jobs:
             --x-abi-tools-use-exact-versions \
             --host-triplet=${{ matrix.triplet }} \
             --triplet=${{ matrix.triplet }}
+        # ./vcpkg install --x-abi-tools-use-exact-versions --host-triplet=x64-windows --triplet=x64-windows
 
       - name: Upload error logs
         if: ${{ failure() || cancelled() }}
