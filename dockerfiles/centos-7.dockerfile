@@ -1,9 +1,10 @@
 FROM centos:centos7.9.2009 AS base_build
 
+COPY dockerfiles/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo
+
 # Build Tools  ---
-RUN yum update -y && yum install -y \
-    centos-release-scl \
-    https://packages.endpointdev.com/rhel/7/os/x86_64/endpoint-repo.x86_64.rpm && \
+RUN yum clean all && yum update -y && yum install -y \
+    https://packages.endpointdev.com/rhel/7/os/x86_64/endpoint-repo.x86_64.rpm \
     yum group install -y "Development Tools" && yum install -y \
     autoconf \
     autoconf-archive \
@@ -18,9 +19,8 @@ RUN yum update -y && yum install -y \
     unzip \
     yum-utils \
     zip && \
+    yum install -y devtoolset-11 && \
     yum -y clean all && rm -rf /var/cache
-
-RUN yum install -y devtoolset-11
 
 RUN echo "source /opt/rh/devtoolset-11/enable" >> /etc/bashrc
 SHELL ["/bin/bash", "--login", "-c"]
