@@ -6,14 +6,6 @@
         "apr",
         "apr-util",
         {
-            "name": "aws-sdk-cpp",
-            "default-features": false,
-            "features": [
-                "s3",
-                "sqs"
-            ]
-        },
-        {
             "name": "arrow",
             "default-features": false,
             "features": [
@@ -24,12 +16,19 @@
             ],
             "platform": "!(windows & x86)"
         },
+        {
+            "name": "aws-sdk-cpp",
+            "default-features": false,
+            "features": [
+                "s3",
+                "sqs"
+            ]
+        },
         "azure-storage-blobs-cpp",
         "azure-storage-files-shares-cpp",
-        "boost-circular-buffer",
         "boost-property-tree",
-        "boost-regex",
         "cpp-driver",
+        "cpp-httplib",
         "cppunit",
         "cpr",
         "curl",
@@ -66,7 +65,9 @@
         },
         {
             "name": "libmysql",
-            "platform": "!(windows & x86)"
+            "platform": "!(windows & x86)",
+            "default-features": false,
+            "features": []
         },
         "librdkafka",
         "libuv",

@@ -61,10 +61,14 @@ RUN mono `./vcpkg fetch nuget | tail -n 1` \
 RUN mkdir /hpcc-dev/build
 RUN ./vcpkg install \
     --x-abi-tools-use-exact-versions \
-    --x-install-root=/hpcc-dev/build/vcpkg_installed \
+    --downloads-root=/hpcc-dev/vcpkg_downloads \
+    --x-buildtrees-root=/hpcc-dev/vcpkg_buildtrees \
+    --x-packages-root=/hpcc-dev/vcpkg_packages \
+    --x-install-root=/hpcc-dev/vcpkg_installed \
     --host-triplet=x64-linux-dynamic \
     --triplet=x64-linux-dynamic
-# ./vcpkg install --x-abi-tools-use-exact-versions --host-triplet=x64-linux-dynamic --triplet=x64-linux-dynamic --x-install-root=/hpcc-dev/build/vcpkg_installed
+    
+# ./vcpkg install --x-abi-tools-use-exact-versions --x-install-root=/hpcc-dev/build/vcpkg_installed --host-triplet=x64-linux-dynamic --triplet=x64-linux-dynamic
 
 RUN mkdir -p /hpcc-dev/tools/cmake
 RUN cp -r $(dirname $(dirname `./vcpkg fetch cmake | tail -n 1`))/* /hpcc-dev/tools/cmake
@@ -91,7 +95,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 
 WORKDIR /hpcc-dev
 
-COPY --from=vcpkg_build /hpcc-dev/build/vcpkg_installed /hpcc-dev/vcpkg_installed
+COPY --from=vcpkg_build /hpcc-dev/vcpkg_installed /hpcc-dev/vcpkg_installed
 COPY --from=vcpkg_build /hpcc-dev/tools /hpcc-dev/tools
 
 RUN cp -rs /hpcc-dev/tools/cmake/bin /usr/local/ && \

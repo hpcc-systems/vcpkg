@@ -1,14 +1,17 @@
 FROM centos:centos7.9.2009 AS base_build
 
+COPY dockerfiles/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo
+
 # Build Tools  ---
-RUN yum update -y && yum install -y \
-    centos-release-scl \
-    https://packages.endpointdev.com/rhel/7/os/x86_64/endpoint-repo.x86_64.rpm && \
+RUN yum clean all && yum update -y && yum install -y \
+    https://packages.endpointdev.com/rhel/7/os/x86_64/endpoint-repo.x86_64.rpm \
     yum group install -y "Development Tools" && yum install -y \
     autoconf \
     autoconf-archive \
     automake \
+    bison \
     curl \
+    flex \
     git \
     kernel-devel \
     libtool \
@@ -18,9 +21,8 @@ RUN yum update -y && yum install -y \
     unzip \
     yum-utils \
     zip && \
+    yum install -y devtoolset-11 && \
     yum -y clean all && rm -rf /var/cache
-
-RUN yum install -y devtoolset-11
 
 RUN echo "source /opt/rh/devtoolset-11/enable" >> /etc/bashrc
 SHELL ["/bin/bash", "--login", "-c"]
@@ -126,10 +128,14 @@ RUN mono `./vcpkg fetch nuget | tail -n 1` \
 RUN mkdir /hpcc-dev/build
 RUN ./vcpkg install \
     --x-abi-tools-use-exact-versions \
-    --x-install-root=/hpcc-dev/build/vcpkg_installed \
-    --host-triplet=x64-centos-7-dynamic \
-    --triplet=x64-centos-7-dynamic
-# ./vcpkg install --x-abi-tools-use-exact-versions --x-install-root=/hpcc-dev/build/vcpkg_installed --triplet=x64-centos-7-dynamic
+    --downloads-root=/hpcc-dev/vcpkg_downloads \
+    --x-buildtrees-root=/hpcc-dev/vcpkg_buildtrees \
+    --x-packages-root=/hpcc-dev/vcpkg_packages \
+    --x-install-root=/hpcc-dev/vcpkg_installed \
+    --host-triplet=x64-linux-dynamic \
+    --triplet=x64-linux-dynamic
+
+# ./vcpkg install --x-abi-tools-use-exact-versions --x-install-root=/hpcc-dev/build/vcpkg_installed --host-triplet=x64-linux-dynamic --triplet=x64-linux-dynamic
 
 RUN mkdir -p /hpcc-dev/tools/cmake
 RUN cp -r $(dirname $(dirname `./vcpkg fetch cmake | tail -n 1`))/* /hpcc-dev/tools/cmake
@@ -160,7 +166,7 @@ RUN wget https://cran.r-project.org/src/contrib/Archive/Rcpp/${Rcpp_package} && 
 
 WORKDIR /hpcc-dev
 
-COPY --from=vcpkg_build /hpcc-dev/build/vcpkg_installed /hpcc-dev/vcpkg_installed
+COPY --from=vcpkg_build /hpcc-dev/vcpkg_installed /hpcc-dev/vcpkg_installed
 COPY --from=vcpkg_build /hpcc-dev/tools /hpcc-dev/tools
 
 RUN cp -rs /hpcc-dev/tools/cmake/bin /usr/local/ && \
