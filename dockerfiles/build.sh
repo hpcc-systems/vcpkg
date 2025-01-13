@@ -23,10 +23,10 @@ echo "DOCKER_PASSWORD: $DOCKER_PASSWORD"
 docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 
 function doBuild() {
-    docker pull "hpccsystems/platform-build-vcpkg-$1:$GITHUB_REF" || true
+    # docker pull "hpccsystems/platform-build-vcpkg-$1:$GITHUB_REF" || true
     docker pull "hpccsystems/platform-build-vcpkg-$1:$GITHUB_BRANCH" || true
 
-    docker build --progress plain --rm -f "$SCRIPT_DIR/$1.dockerfile" \
+    docker buildx build -f "$SCRIPT_DIR/$1.dockerfile" \
         --target vcpkg_build \
         --build-arg NUGET_MODE=readwrite \
         --build-arg GITHUB_ACTOR=$GITHUB_ACTOR \
@@ -62,9 +62,9 @@ function doBuild() {
     # docker push hpccsystems/platform-build-base-$1:$GITHUB_BRANCH
 }
 
-doBuild ubuntu-24.04
+# doBuild ubuntu-24.04
 # doBuild amazonlinux 
-# doBuild centos-7 
+doBuild centos-7 
 # doBuild centos-8 
 # doBuild ubuntu-24.04 &
 # doBuild ubuntu-23.04 &
