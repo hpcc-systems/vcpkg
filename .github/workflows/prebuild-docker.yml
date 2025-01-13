@@ -27,6 +27,7 @@ jobs:
             "ubuntu-20.04",
             "rockylinux-8",
             "centos-8",
+            "centos-7"
           ]
       fail-fast: false
 
