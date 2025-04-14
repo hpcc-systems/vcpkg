@@ -1,0 +1,176 @@
+{
+    "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
+    "name": "hpcc-platform",
+    "version": "9.10.0",
+    "dependencies": [
+        {
+            "name": "antlr3",
+            "platform": "!wasm32"
+        },
+        {
+            "name": "apr",
+            "platform": "!wasm32"
+        },
+        {
+            "name": "apr-util",
+            "platform": "!wasm32"
+        },
+        {
+            "name": "arrow",
+            "default-features": false,
+            "features": [
+                "acero",
+                "dataset",
+                "filesystem",
+                "parquet"
+            ],
+            "platform": "!(windows & x86) & !wasm32"
+        },
+        {
+            "name": "aws-sdk-cpp",
+            "default-features": false,
+            "features": [
+                "s3",
+                "sqs"
+            ],
+            "platform": "!wasm32"
+        },
+        "azure-storage-blobs-cpp",
+        "azure-storage-files-shares-cpp",
+        "boost-property-tree",
+        {
+            "name": "cpp-driver",
+            "platform": "!wasm32"
+        },
+        "cpp-httplib",
+        "cppunit",
+        "cpr",
+        "curl",
+        {
+            "name": "elasticlient",
+            "platform": "!windows"
+        },
+        "h3",
+        "hiredis",
+        {
+            "name": "icu",
+            "features": [
+                "tools"
+            ]
+        },
+        "jsoncpp",
+        "jwt-cpp",
+        {
+            "name": "libarchive",
+            "default-features": false,
+            "features": [
+                "bzip2"
+            ]
+        },
+        "libcouchbase-cxx",
+        {
+            "name": "libgit2",
+            "platform": "!wasm32"
+        },
+        {
+            "name": "libiconv",
+            "platform": "osx"
+        },
+        {
+            "name": "libmemcached",
+            "platform": "!windows & !osx & !wasm32"
+        },
+        {
+            "name": "libmysql",
+            "platform": "!(windows & x86) & !wasm32",
+            "default-features": false,
+            "features": []
+        },
+        "librdkafka",
+        "libuv",
+        "libxml2",
+        {
+            "name": "libxslt",
+            "default-features": false,
+            "features": [],
+            "platform": "!wasm32"
+        },
+        "libyaml",
+        "lz4",
+        "minizip",
+        {
+            "name": "mongo-cxx-driver",
+            "platform": "!wasm32"
+        },
+        "nlohmann-json",
+        {
+            "name": "nlp-engine",
+            "platform": "!wasm32"
+        },
+        {
+            "name": "numactl",
+            "platform": "!windows & !osx & !wasm32"
+        },
+        {
+            "name": "openblas",
+            "features": [
+                "dynamic-arch",
+                "threads"
+            ],
+            "platform": "!windows & !wasm32"
+        },
+        {
+            "name": "openblas",
+            "features": [
+                "threads"
+            ],
+            "platform": "windows"
+        },
+        {
+            "name": "openldap",
+            "platform": "!windows & !wasm32"
+        },
+        "openssl",
+        {
+            "name": "opentelemetry-cpp",
+            "default-features": false,
+            "features": [
+                "otlp-http",
+                "otlp-grpc"
+            ],
+            "platform": "!wasm32"
+        },
+        {
+            "name": "opentelemetry-cpp",
+            "default-features": false,
+            "features": [
+                "otlp-http"
+            ],
+            "platform": "wasm32"
+        },
+        {
+            "name": "pcre2",
+            "platform": "!wasm32"
+        },
+        {
+            "name": "python3",
+            "platform": "windows"
+        },
+        {
+            "name": "rapidjson",
+            "platform": "!wasm32"
+        },
+        {
+            "name": "sqlite3",
+            "platform": "!wasm32"
+        },
+        "tbb",
+        "wasmtime-cpp-api",
+        {
+            "name": "winflexbison",
+            "platform": "windows"
+        },
+        "zlib",
+        "zstd"
+    ]
+}
