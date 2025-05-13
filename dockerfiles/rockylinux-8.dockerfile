@@ -21,6 +21,9 @@ RUN dnf install -y 'dnf-command(config-manager)' && \
     zip && \
     dnf clean all
 
+WORKDIR /hpcc-dev
+RUN chmod -R 777 /hpcc-dev
+
 RUN dnf install -y gcc-toolset-12-gcc gcc-toolset-12-gcc-c++ gcc-toolset-12-binutils gcc-toolset-12-annobin-annocheck gcc-toolset-12-annobin-plugin-gcc
 
 RUN echo "source /opt/rh/gcc-toolset-12/enable" >> /etc/bashrc
@@ -69,7 +72,7 @@ RUN ./vcpkg install \
     --x-install-root=/hpcc-dev/vcpkg_installed \
     --host-triplet=x64-linux-dynamic \
     --triplet=x64-linux-dynamic
-    
+
 # ./vcpkg install --x-abi-tools-use-exact-versions --x-install-root=/hpcc-dev/build/vcpkg_installed --host-triplet=x64-linux-dynamic --triplet=x64-linux-dynamic
 
 RUN mkdir -p /hpcc-dev/tools/cmake

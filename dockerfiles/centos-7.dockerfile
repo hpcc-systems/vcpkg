@@ -91,6 +91,9 @@ RUN ln -s /usr/local/libtool/2_4_6/bin/libtool /usr/local/bin/ && \
 # ldconfig
 # ldconfig -v
 
+WORKDIR /hpcc-dev
+RUN chmod -R 777 /hpcc-dev
+
 FROM base_build AS vcpkg_build
 
 # Build Tools - Mono  ---

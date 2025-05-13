@@ -21,6 +21,10 @@ jobs:
     strategy:
       matrix:
         include:
+          - image: "wasm32-emscripten"
+            triplet: "wasm32-emscripten"
+            base_image: "ubuntu:24.04"
+            tag_postfix: ""
           - image: "ubuntu-24.04"
             triplet: "arm64-linux-dynamic"
             base_image: "arm64v8/ubuntu:24.04"
@@ -52,7 +56,7 @@ jobs:
       fail-fast: false
 
     name: "Docker:  ${{ matrix.image }}-${{ matrix.triplet }}"
-    runs-on: ${{ matrix.triplet == 'x64-linux-dynamic' && 'ubuntu-22.04' || 'ubuntu-22.04-arm' }} 
+    runs-on: ${{ matrix.tag_postfix == '' && 'ubuntu-22.04' || 'ubuntu-22.04-arm' }} 
     steps:
       - name: Free additional disk space (remove Android SDK + Tools)
         continue-on-error: true

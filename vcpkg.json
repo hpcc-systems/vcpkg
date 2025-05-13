@@ -3,9 +3,18 @@
     "name": "hpcc-platform",
     "version": "9.10.0",
     "dependencies": [
-        "antlr3",
-        "apr",
-        "apr-util",
+        {
+            "name": "antlr3",
+            "platform": "!wasm32"
+        },
+        {
+            "name": "apr",
+            "platform": "!wasm32"
+        },
+        {
+            "name": "apr-util",
+            "platform": "!wasm32"
+        },
         {
             "name": "arrow",
             "default-features": false,
@@ -15,7 +24,7 @@
                 "filesystem",
                 "parquet"
             ],
-            "platform": "!(windows & x86)"
+            "platform": "!(windows & x86) & !wasm32"
         },
         {
             "name": "aws-sdk-cpp",
@@ -23,12 +32,16 @@
             "features": [
                 "s3",
                 "sqs"
-            ]
+            ],
+            "platform": "!wasm32"
         },
         "azure-storage-blobs-cpp",
         "azure-storage-files-shares-cpp",
         "boost-property-tree",
-        "cpp-driver",
+        {
+            "name": "cpp-driver",
+            "platform": "!wasm32"
+        },
         "cpp-httplib",
         "cppunit",
         "cpr",
@@ -55,18 +68,21 @@
             ]
         },
         "libcouchbase-cxx",
-        "libgit2",
+        {
+            "name": "libgit2",
+            "platform": "!wasm32"
+        },
         {
             "name": "libiconv",
             "platform": "osx"
         },
         {
             "name": "libmemcached",
-            "platform": "!windows & !osx"
+            "platform": "!windows & !osx & !wasm32"
         },
         {
             "name": "libmysql",
-            "platform": "!(windows & x86)",
+            "platform": "!(windows & x86) & !wasm32",
             "default-features": false,
             "features": []
         },
@@ -76,17 +92,24 @@
         {
             "name": "libxslt",
             "default-features": false,
-            "features": []
+            "features": [],
+            "platform": "!wasm32"
         },
         "libyaml",
         "lz4",
         "minizip",
-        "mongo-cxx-driver",
+        {
+            "name": "mongo-cxx-driver",
+            "platform": "!wasm32"
+        },
         "nlohmann-json",
-        "nlp-engine",
+        {
+            "name": "nlp-engine",
+            "platform": "!wasm32"
+        },
         {
             "name": "numactl",
-            "platform": "!windows & !osx"
+            "platform": "!windows & !osx & !wasm32"
         },
         {
             "name": "openblas",
@@ -94,7 +117,7 @@
                 "dynamic-arch",
                 "threads"
             ],
-            "platform": "!windows"
+            "platform": "!windows & !wasm32"
         },
         {
             "name": "openblas",
@@ -105,7 +128,7 @@
         },
         {
             "name": "openldap",
-            "platform": "!windows"
+            "platform": "!windows & !wasm32"
         },
         "openssl",
         {
@@ -114,15 +137,33 @@
             "features": [
                 "otlp-http",
                 "otlp-grpc"
-            ]
+            ],
+            "platform": "!wasm32"
         },
-        "pcre2",
+        {
+            "name": "opentelemetry-cpp",
+            "default-features": false,
+            "features": [
+                "otlp-http"
+            ],
+            "platform": "wasm32"
+        },
+        {
+            "name": "pcre2",
+            "platform": "!wasm32"
+        },
         {
             "name": "python3",
             "platform": "windows"
         },
-        "rapidjson",
-        "sqlite3",
+        {
+            "name": "rapidjson",
+            "platform": "!wasm32"
+        },
+        {
+            "name": "sqlite3",
+            "platform": "!wasm32"
+        },
         "tbb",
         "wasmtime-cpp-api",
         {

@@ -28,6 +28,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     uuid-dev \
     zip
 
+WORKDIR /hpcc-dev
+RUN chmod -R 777 /hpcc-dev
+
 FROM base_build AS vcpkg_build
 
 # Build Tools - Mono  ---
@@ -46,6 +49,7 @@ ENV VCPKG_NUGET_REPOSITORY=https://github.com/hpcc-systems/vcpkg
 COPY . /hpcc-dev/vcpkg
 
 WORKDIR /hpcc-dev/vcpkg
+RUN chmod -R 777 /hpcc-dev
 
 RUN ./bootstrap-vcpkg.sh
 

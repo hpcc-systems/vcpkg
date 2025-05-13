@@ -1,5 +1,4 @@
-ARG BASE_IMAGE=ubuntu:22.04
-FROM ${BASE_IMAGE} AS base_build
+FROM ubuntu:24.04 AS base_build
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -20,6 +19,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gnupg \
     groff-base \
     libtool \
+    libtirpc-dev \
     pkg-config \
     software-properties-common \
     tar \
@@ -30,19 +30,27 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /hpcc-dev
 RUN chmod -R 777 /hpcc-dev
 
+ARG EMSCRIPTEN_VERSION=4.0.7
+RUN git clone https://github.com/emscripten-core/emsdk.git && \
+    cd emsdk && \
+    ./emsdk install ${EMSCRIPTEN_VERSION} && \
+    ./emsdk activate ${EMSCRIPTEN_VERSION} && \
+    echo 'source "/hpcc-dev/emsdk/emsdk_env.sh"' >> /etc/profile.d/emsdk_env.sh
+SHELL ["/bin/bash", "--login", "-c"]
+
 FROM base_build AS vcpkg_build
+WORKDIR /hpcc-dev
 
 # Build Tools - Mono  ---
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-RUN sh -c 'echo "deb https://download.mono-project.com/repo/ubuntu stable-focal main" > /etc/apt/sources.list.d/mono-official-stable.list'
 RUN apt-get update && apt-get install --no-install-recommends -y \
     cmake \
     mono-complete \
     ninja-build
 
-ARG TRIPLET=x64-linux-dynamic
+ARG HOST_TRIPLET=x64-linux-dynamic
+ARG TRIPLET=wasm32-emscripten
 ARG NUGET_MODE=readwrite
-ENV VCPKG_DEFAULT_HOST_TRIPLET=${TRIPLET}
+ENV VCPKG_DEFAULT_HOST_TRIPLET=${HOST_TRIPLET}
 ENV VCPKG_DEFAULT_TRIPLET=${TRIPLET}
 ENV VCPKG_BINARY_SOURCES="clear;nuget,GitHub,${NUGET_MODE}"
 ENV VCPKG_NUGET_REPOSITORY=https://github.com/hpcc-systems/vcpkg
@@ -74,14 +82,15 @@ RUN ./vcpkg install \
     --x-buildtrees-root=/hpcc-dev/vcpkg_buildtrees \
     --x-packages-root=/hpcc-dev/vcpkg_packages \
     --x-install-root=/hpcc-dev/vcpkg_installed \
-    --host-triplet=${TRIPLET} \
+    --host-triplet=${HOST_TRIPLET} \
     --triplet=${TRIPLET}
-# ./vcpkg install --x-abi-tools-use-exact-versions --x-install-root=/hpcc-dev/build/vcpkg_installed --host-triplet=x64-linux-dynamic --triplet=x64-linux-dynamic
+# ./vcpkg install --x-abi-tools-use-exact-versions --x-install-root=/hpcc-dev/build/vcpkg_installed --host-triplet=x64-linux-dynamic --triplet=wasm32-emscripten
 
 RUN mkdir -p /hpcc-dev/tools/cmake
 RUN cp -r $(dirname $(dirname `./vcpkg fetch cmake | tail -n 1`))/. /hpcc-dev/tools/cmake
 
 FROM base_build
+WORKDIR /hpcc-dev
 
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get update && apt-get install --no-install-recommends -y \

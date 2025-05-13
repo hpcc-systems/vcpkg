@@ -65,6 +65,7 @@ mkdir -p ./vcpkg-logs
 if [ "$1" != "" ]; then
     doBuild $1
 else
+    doBuild wasm32-emscripten &> vcpkg-logs/wasm32-emscripten.log &
     doBuild ubuntu-24.04 &> vcpkg-logs/ubuntu-24.04.log &
     doBuild ubuntu-22.04 &> vcpkg-logs/ubuntu-22.04.log &
     doBuild ubuntu-20.04 &> vcpkg-logs/ubuntu-20.04.log &
