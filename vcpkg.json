@@ -128,6 +128,7 @@
             "name": "winflexbison",
             "platform": "windows"
         },
-        "zlib"
+        "zlib",
+        "zstd"
     ]
 }
