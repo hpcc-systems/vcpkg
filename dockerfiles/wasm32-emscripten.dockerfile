@@ -39,7 +39,6 @@ RUN git clone https://github.com/emscripten-core/emsdk.git && \
 SHELL ["/bin/bash", "--login", "-c"]
 
 FROM base_build AS vcpkg_build
-WORKDIR /hpcc-dev
 
 # Build Tools - Mono  ---
 RUN apt-get update && apt-get install --no-install-recommends -y \
@@ -84,13 +83,12 @@ RUN ./vcpkg install \
     --x-install-root=/hpcc-dev/vcpkg_installed \
     --host-triplet=${HOST_TRIPLET} \
     --triplet=${TRIPLET}
-# ./vcpkg install --x-abi-tools-use-exact-versions --x-install-root=/hpcc-dev/build/vcpkg_installed --host-triplet=x64-linux-dynamic --triplet=wasm32-emscripten
+# ./vcpkg install --x-abi-tools-use-exact-versions --host-triplet=x64-linux-dynamic --triplet=wasm32-emscripten
 
 RUN mkdir -p /hpcc-dev/tools/cmake
 RUN cp -r $(dirname $(dirname `./vcpkg fetch cmake | tail -n 1`))/. /hpcc-dev/tools/cmake
 
 FROM base_build
-WORKDIR /hpcc-dev
 
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get update && apt-get install --no-install-recommends -y \

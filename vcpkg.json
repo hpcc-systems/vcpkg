@@ -67,7 +67,10 @@
                 "bzip2"
             ]
         },
-        "libcouchbase-cxx",
+        {
+            "name": "libcouchbase-cxx",
+            "platform": "!wasm32"
+        },
         {
             "name": "libgit2",
             "platform": "!wasm32"
@@ -87,7 +90,10 @@
             "features": []
         },
         "librdkafka",
-        "libuv",
+        {
+            "name": "libuv",
+            "platform": "!wasm32"
+        },
         "libxml2",
         {
             "name": "libxslt",
@@ -128,7 +134,7 @@
         },
         {
             "name": "openldap",
-            "platform": "!windows & !wasm32"
+            "platform": "!windows"
         },
         "openssl",
         {
