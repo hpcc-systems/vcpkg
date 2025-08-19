@@ -1,0 +1,22 @@
+version: 2
+updates:
+- package-ecosystem: "vcpkg"
+  directory: "/"
+  schedule:
+    interval: "weekly"
+    target-branch: "hpcc-platform-9.14.x"
+- package-ecosystem: "vcpkg"
+  directory: "/"
+  schedule:
+    interval: "weekly"
+    target-branch: "hpcc-platform-9.12.x"
+- package-ecosystem: "vcpkg"
+  directory: "/"
+  schedule:
+    interval: "weekly"
+    target-branch: "hpcc-platform-9.10.x"
+- package-ecosystem: "vcpkg"
+  directory: "/"
+  schedule:
+    interval: "weekly"
+    target-branch: "hpcc-platform-9.8.x"
