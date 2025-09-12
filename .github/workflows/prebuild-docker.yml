@@ -56,7 +56,7 @@ jobs:
       fail-fast: false
 
     name: "Docker:  ${{ matrix.image }}-${{ matrix.triplet }}"
-    runs-on: ${{ matrix.tag_postfix == '' && 'ubuntu-22.04' || 'ubuntu-22.04-arm' }} 
+    runs-on: ${{ matrix.tag_postfix == '' && 'ubuntu-24.04' || 'ubuntu-24.04-arm' }} 
     steps:
       - name: Free additional disk space (remove Android SDK + Tools)
         continue-on-error: true
@@ -111,12 +111,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Pull previous images
-        run: |
-          docker pull hpccsystems/platform-build-base-${{ matrix.image }}:${{ steps.vars.outputs.sha_short }} || true
-          docker pull hpccsystems/platform-build-base-${{ matrix.image }}:${{ steps.vars.outputs.vcpkg_tag }} || true
-
-      - name: Build ${{ matrix.os }} image
+      - name: Build ${{ matrix.image }} image
         uses: docker/build-push-action@v5
         with:
           builder: ${{ steps.buildx.outputs.name }}
@@ -124,14 +119,21 @@ jobs:
           context: .
           push: ${{ steps.vars.outputs.repository_owner == 'hpcc-systems' }}
           build-args: |
-            BASE_IMAGE=${{ matrix.base_image }} 
+            BASE_IMAGE=${{ matrix.base_image }}
             TRIPLET=${{ matrix.triplet }}
             NUGET_MODE=readwrite
             GITHUB_ACTOR=${{ github.repository_owner }}
             GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+            BUILDKIT_INLINE_CACHE=1
           tags: |
             hpccsystems/platform-build-base-${{ matrix.image }}:${{ steps.vars.outputs.sha_short }}
             hpccsystems/platform-build-base-${{ matrix.image }}:${{ steps.vars.outputs.vcpkg_tag }}
           cache-from: |
-            type=registry,ref=hpccsystems/platform-build-base-${{ matrix.image }}:${{ steps.vars.outputs.sha_short }}
             type=registry,ref=hpccsystems/platform-build-base-${{ matrix.image }}:${{ steps.vars.outputs.vcpkg_tag }}
+          cache-to: |
+            type=registry,ref=hpccsystems/platform-build-base-${{ matrix.image }}:${{ steps.vars.outputs.vcpkg_tag }},mode=max
+
+      - name: Show disk usage after build
+        if: always()
+        run: |
+          echo "Disk usage after Docker build:" && df -h
