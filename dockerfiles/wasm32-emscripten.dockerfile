@@ -30,7 +30,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /hpcc-dev
 RUN chmod -R 777 /hpcc-dev
 
-ARG EMSCRIPTEN_VERSION=4.0.7
+ARG EMSCRIPTEN_VERSION=5.0.1
 RUN git clone https://github.com/emscripten-core/emsdk.git && \
     cd emsdk && \
     ./emsdk install ${EMSCRIPTEN_VERSION} && \

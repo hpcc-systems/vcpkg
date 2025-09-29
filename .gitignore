@@ -328,3 +328,4 @@ pythonenv3.8/
 ###################
 .env
 /vcpkg_*/
+/emsdk
