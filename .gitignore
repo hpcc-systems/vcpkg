@@ -289,6 +289,7 @@ __pycache__/
 /installed*/
 /vcpkg_installed*/
 /packages/
+/vcpkg_installed/
 /scripts/buildsystems/tmp/
 #ignore custom triplets
 /triplets/*
@@ -326,3 +327,9 @@ prefab/
 pythonenv3.8/
 .venv/
 
+###################
+# hpcc
+###################
+.env
+/vcpkg_*/
+/emsdk
