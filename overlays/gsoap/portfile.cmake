@@ -5,8 +5,8 @@ include(vcpkg_common_functions)
 vcpkg_from_github(
     OUT_SOURCE_PATH CURRENT_BUILDTREES_DIR
     REPO hpcc-systems/gsoap
-    REF v2.7.13
-    SHA512 d4b5b967cf3e8e5134cb2b0d575c41dbde1a298d3c47aefc89ff58be6120e78e9b76179a3cc09a9e4a42f97adb5c117b121811c98a1b319b4390e39e6fe494c0
+    REF v${VERSION}
+    SHA512 b2e1c52d25cbd461a6f22308d3da4095465ea4c6ecbbe25005225d22aa978e82d49dc54f6b2e9bf3702b542e68a35f75c082956669a3e1ceb9e6bcb499353f94
     HEAD_REF master
 )
 
