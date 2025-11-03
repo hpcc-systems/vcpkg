@@ -1,9 +1,8 @@
-vcpkg_from_gitlab(
-    GITLAB_URL https://gitlab.gnome.org/
+vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO GNOME/libxml2
     REF "v${VERSION}"
-    SHA512 3f2de446657bf3c23c92358ce8946f59253b9fcc09577b59eecaffdbd97e051659855c79f4882ee9f8841dd194b6bd5de2a8017691473b505e905b9dde6a1bc9
+    SHA512 10585f3a9274af6eb6980b0159ea8a82b3f55662c94eac0a43acab87e7feb625f1629d20e0d477ab06826170f9b5b0d817eb8fc8a472afa6001851e7dbf199f3
     HEAD_REF master
     PATCHES
         disable-docs.patch
