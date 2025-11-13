@@ -124,14 +124,14 @@
                 "dynamic-arch",
                 "threads"
             ],
-            "platform": "!windows & !wasm32"
+            "platform": "!windows & !osx & !wasm32"
         },
         {
             "name": "openblas",
             "features": [
                 "threads"
             ],
-            "platform": "windows"
+            "platform": "windows & osx"
         },
         {
             "name": "openldap",

@@ -27,7 +27,8 @@ jobs:
             "windows-2025-x64",
             "windows-2022-x64",
             "macos-13-x64",
-            "macos-14-arm64"
+            "macos-14-arm64",
+            "macos-14-x86_64"
           ]
         include:
           - label: "ubuntu-22.04-x64"
@@ -53,6 +54,11 @@ jobs:
           - label: "macos-14-arm64"
             os: "macos-14"
             triplet: "arm64-osx"
+            mono: "mono"
+            sudo: "sudo"
+          - label: "macos-14-x86_64"
+            os: "macos-14"
+            triplet: "x64-osx"
             mono: "mono"
             sudo: "sudo"
       fail-fast: false
