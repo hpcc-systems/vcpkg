@@ -33,7 +33,7 @@ vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO datastax/cpp-driver
     REF 2.16.2
-    SHA512 6dee9ceaafa1a86bacd54759931d6cf794c50cb2e0944a568b2e36f04f4151d816f7d041ef17d70b1d0133497ec25f8f975c166b4fc6f882df23d0725bb0e28a
+    SHA512 86607e9dcfe82b2ab9fb8a43c66dfd082e18bd09edcc71e73e23d44f9e21babb313cfbfc936125babcacc2e066b4723c79c101493d52791fd0bbb1566b34ddf3
     HEAD_REF master
 )
 
