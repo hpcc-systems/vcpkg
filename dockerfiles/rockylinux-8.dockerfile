@@ -14,6 +14,7 @@ RUN dnf install -y 'dnf-command(config-manager)' && \
     libtool \
     libtirpc-devel \
     perl-IPC-Cmd \
+    perl-Time-Piece \
     python3 \
     rpm-build \
     tar \
