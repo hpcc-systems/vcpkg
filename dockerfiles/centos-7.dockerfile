@@ -16,6 +16,7 @@ RUN yum clean all && yum update -y && yum install -y \
     kernel-devel \
     libtool \
     perl-IPC-Cmd \
+    perl-Time-Piece \
     python3 \
     tar \
     unzip \
