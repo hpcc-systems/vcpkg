@@ -1,5 +1,7 @@
 FROM centos:centos7.9.2009 AS base_build
 
+ARG PYTHON_VERSION=3.14.0
+
 COPY dockerfiles/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo
 
 # Build Tools  ---
@@ -14,19 +16,38 @@ RUN yum clean all && yum update -y && yum install -y \
     flex \
     git \
     kernel-devel \
+    libffi-devel \
     libtool \
+    openssl11-devel \
     perl-IPC-Cmd \
     perl-Time-Piece \
-    python3 \
+    readline-devel \
+    sqlite-devel \
     tar \
     unzip \
+    xz-devel \
     yum-utils \
+    zlib-devel \
     zip && \
     yum install -y devtoolset-11 && \
     yum -y clean all && rm -rf /var/cache
 
 RUN echo "source /opt/rh/devtoolset-11/enable" >> /etc/bashrc
 SHELL ["/bin/bash", "--login", "-c"]
+
+RUN curl -fsSLo Python-${PYTHON_VERSION}.tgz https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz && \
+    tar xzf Python-${PYTHON_VERSION}.tgz && \
+    cd Python-${PYTHON_VERSION} && \
+    export CPPFLAGS="-I/usr/include/openssl11" && \
+    export LDFLAGS="-L/usr/lib64/openssl11" && \
+    ./configure --prefix=/usr/local --with-ensurepip=install && \
+    make -j"$(nproc)" && \
+    make altinstall && \
+    ln -sf /usr/local/bin/python3.14 /usr/local/bin/python3 && \
+    ln -sf /usr/local/bin/pip3.14 /usr/local/bin/pip3 && \
+    ln -sf /usr/local/bin/python3.14-config /usr/local/bin/python3-config && \
+    cd / && \
+    rm -rf Python-${PYTHON_VERSION} Python-${PYTHON_VERSION}.tgz
 
 RUN curl -o pkg-config-0.29.2.tar.gz https://pkg-config.freedesktop.org/releases/pkg-config-0.29.2.tar.gz && \
     tar xvfz pkg-config-0.29.2.tar.gz
@@ -153,7 +174,6 @@ FROM base_build
 RUN yum makecache && yum install -y \
     epel-release \
     java-11-openjdk-devel \
-    python3-devel \
     wget && \
     yum update -y && yum install -y \
     ccache \

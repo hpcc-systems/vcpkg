@@ -1,5 +1,7 @@
 FROM rockylinux:8 AS base_build
 
+ARG PYTHON_VERSION=3.14.0
+
 RUN dnf install -y 'dnf-command(config-manager)' && \
     dnf config-manager --set-enabled powertools && \
     dnf update -y && \
@@ -12,13 +14,18 @@ RUN dnf install -y 'dnf-command(config-manager)' && \
     flex \
     git \
     libtool \
+    libffi-devel \
     libtirpc-devel \
+    openssl-devel \
     perl-IPC-Cmd \
     perl-Time-Piece \
-    python3 \
+    readline-devel \
+    sqlite-devel \
     rpm-build \
     tar \
     unzip \
+    xz-devel \
+    zlib-devel \
     zip && \
     dnf clean all
 
@@ -29,6 +36,18 @@ RUN dnf install -y gcc-toolset-12-gcc gcc-toolset-12-gcc-c++ gcc-toolset-12-binu
 
 RUN echo "source /opt/rh/gcc-toolset-12/enable" >> /etc/bashrc
 SHELL ["/bin/bash", "--login", "-c"]
+
+RUN curl -fsSLo Python-${PYTHON_VERSION}.tgz https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz && \
+    tar xzf Python-${PYTHON_VERSION}.tgz && \
+    cd Python-${PYTHON_VERSION} && \
+    ./configure --prefix=/usr/local --with-ensurepip=install && \
+    make -j"$(nproc)" && \
+    make altinstall && \
+    ln -sf /usr/local/bin/python3.14 /usr/local/bin/python3 && \
+    ln -sf /usr/local/bin/pip3.14 /usr/local/bin/pip3 && \
+    ln -sf /usr/local/bin/python3.14-config /usr/local/bin/python3-config && \
+    cd / && \
+    rm -rf Python-${PYTHON_VERSION} Python-${PYTHON_VERSION}.tgz
 
 FROM base_build AS vcpkg_build
 
@@ -87,7 +106,6 @@ FROM base_build
 
 RUN yum remove -y python3.11 java-1.* && yum install -y \
     java-11-openjdk-devel \
-    python3-devel \
     epel-release && \
     yum update -y && yum install -y \
     ccache \
