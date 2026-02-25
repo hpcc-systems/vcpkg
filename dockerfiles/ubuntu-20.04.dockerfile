@@ -1,5 +1,7 @@
 FROM ubuntu:20.04 AS base_build
 
+ARG PYTHON_VERSION=3.14.0
+
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -18,16 +20,35 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     gnupg \
     groff-base \
+    libbz2-dev \
+    libffi-dev \
+    liblzma-dev \
+    libreadline-dev \
+    libsqlite3-dev \
+    libssl-dev \
     libtool \
     pkg-config \
     software-properties-common \
     tar \
     unzip \
     uuid-dev \
+    wget \
+    zlib1g-dev \
     zip
 
 WORKDIR /hpcc-dev
 RUN chmod -R 777 /hpcc-dev
+RUN curl -fsSLo Python-${PYTHON_VERSION}.tgz https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz && \
+    tar xzf Python-${PYTHON_VERSION}.tgz && \
+    cd Python-${PYTHON_VERSION} && \
+    ./configure --prefix=/usr/local --with-ensurepip=install && \
+    make -j"$(nproc)" && \
+    make altinstall && \
+    ln -sf /usr/local/bin/python3.14 /usr/local/bin/python3 && \
+    ln -sf /usr/local/bin/pip3.14 /usr/local/bin/pip3 && \
+    ln -sf /usr/local/bin/python3.14-config /usr/local/bin/python3-config && \
+    cd / && \
+    rm -rf Python-${PYTHON_VERSION} Python-${PYTHON_VERSION}.tgz
 
 FROM base_build AS vcpkg_build
 
@@ -87,7 +108,6 @@ ENV RInside_package=RInside_0.2.14.tar.gz
 RUN apt-get update && apt-get install --no-install-recommends -y \
     ccache \
     default-jdk \
-    python3-dev \
     wget \
     r-base \
     r-cran-rcpp && \
