@@ -173,6 +173,10 @@
             "platform": "!wasm32"
         },
         "tbb",
+        {
+            "name": "wasi-sdk",
+            "platform": "wasm32"
+        },
         "wasmtime-cpp-api",
         {
             "name": "winflexbison",
