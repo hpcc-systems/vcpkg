@@ -12,7 +12,6 @@
 *.sln.docstates
 /vcpkg.json
 /vcpkg-configuration.json
-reviews*
 
 # fuzzing
 sync_dir*
@@ -326,3 +325,5 @@ prefab/
 pythonenv3.8/
 .venv/
 
+//  hpcc  ---
+.env
