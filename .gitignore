@@ -10,8 +10,6 @@
 *.user
 *.userosscache
 *.sln.docstates
-/vcpkg.json
-/vcpkg-configuration.json
 
 # fuzzing
 sync_dir*
@@ -322,3 +320,5 @@ prefab/
 pythonenv3.8/
 .venv/
 
+//  hpcc  ---
+.env
