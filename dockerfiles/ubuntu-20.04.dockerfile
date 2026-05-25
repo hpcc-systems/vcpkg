@@ -102,11 +102,12 @@ COPY --from=vcpkg_build /hpcc-dev/tools /hpcc-dev/tools
 
 RUN cp -rs /hpcc-dev/tools/cmake/bin /usr/local/ && \
     cp -rs /hpcc-dev/tools/cmake/share /usr/local/ && \
-    ln -s /hpcc-dev/tools/ninja/ninja /usr/local/bin/ninja && \
-    cp -rs /hpcc-dev/tools/node/bin /usr/local/ && \
-    cp -rs /hpcc-dev/tools/node/include /usr/local/ && \
-    cp -rs /hpcc-dev/tools/node/lib /usr/local/ && \
-    cp -rs /hpcc-dev/tools/node/share /usr/local/
+    ln -s /hpcc-dev/tools/ninja/ninja /usr/local/bin/ninja
+
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
+	apt-get update && \
+	apt-get install -y --no-install-recommends nodejs && \
+	apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ENTRYPOINT ["/bin/bash", "--login", "-c"]
 
