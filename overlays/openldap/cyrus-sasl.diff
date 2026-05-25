@@ -6,7 +6,7 @@ index f01b7e6..c4a6faa 100644
  ol_link_sasl=no
  ol_link_spasswd=no
  if test $ol_with_cyrus_sasl != no ; then
-+	PKG_CHECK_MODULES(SASL, libsasl2, [have_openssl=yes], [AC_MSG_FAILURE([OpenSSL is required])])
++	PKG_CHECK_MODULES(SASL, libsasl2, [], [AC_MSG_FAILURE([Cyrus SASL (libsasl2) is required])])
 +	CFLAGS="$CFLAGS $SASL_CFLAGS"
  	AC_CHECK_HEADERS(sasl/sasl.h sasl.h)
  
