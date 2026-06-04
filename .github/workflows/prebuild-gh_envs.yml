@@ -26,7 +26,8 @@ jobs:
         label:
           [
             "windows-2022-x86",
-            "windows-2022-x64"
+            "windows-2022-x64",
+            "windows-2022-arm64"
           ]
         include:
           - label: "windows-2022-x86"
@@ -35,6 +36,9 @@ jobs:
           - label: "windows-2022-x64"
             os: "windows-2022"
             triplet: "x64-windows"
+          - label: "windows-2022-arm64"
+            os: "windows-2022"
+            triplet: "arm64-windows"
       fail-fast: false
 
     name: "GH Environment - ${{ matrix.label }}"
