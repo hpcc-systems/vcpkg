@@ -30,6 +30,8 @@ RUN dnf install -y gcc-toolset-12-gcc gcc-toolset-12-gcc-c++ gcc-toolset-12-binu
 RUN echo "source /opt/rh/gcc-toolset-12/enable" >> /etc/bashrc
 SHELL ["/bin/bash", "--login", "-c"]
 
+FROM base_build AS vcpkg_build
+
 # Rocky 8 repositories provide bison 3.0.x, which is too old for the
 # --file-prefix-map option used during some vcpkg builds (for example thrift).
 # Build newer flex/bison from source and install into /usr/local.
@@ -51,8 +53,6 @@ RUN set -euxo pipefail && \
     rm -rf /tmp/flex* /tmp/bison* && \
     /usr/local/bin/flex --version && \
     /usr/local/bin/bison --version
-
-FROM base_build AS vcpkg_build
 
 # Build Tools - Mono  ---
 RUN dnf install -y 'dnf-command(config-manager)'
@@ -112,7 +112,9 @@ RUN yum remove -y python3.11 java-1.* && yum install -y \
     python3-devel \
     epel-release && \
     yum update -y && yum install -y \
+    bison \
     ccache \
+    flex \
     R-core-devel \
     R-Rcpp-devel \
     R-RInside-devel && \
