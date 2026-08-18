@@ -45,6 +45,10 @@ jobs:
             triplet: "x64-linux-dynamic"
             base_image: ""
             tag_postfix: ""
+          - image: "rockylinux-10"
+            triplet: "x64-linux-dynamic"
+            base_image: ""
+            tag_postfix: ""
       fail-fast: false
 
     name: "Docker:  ${{ matrix.image }}-${{ matrix.triplet }}"

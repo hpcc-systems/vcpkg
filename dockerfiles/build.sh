@@ -57,7 +57,14 @@ function doBuild() {
     # docker push "hpccsystems/platform-build-base-$1:$GITHUB_BRANCH" & 
 }
 
-trap 'kill $(jobs -p)' EXIT
+cleanup() {
+    local job
+    for job in $(jobs -p); do
+        kill "$job"
+    done
+}
+
+trap cleanup EXIT
 
 # ./vcpkg/bootstrap-vcpkg.sh
 mkdir -p ./vcpkg-logs
@@ -69,6 +76,7 @@ else
     doBuild ubuntu-24.04 &> vcpkg-logs/ubuntu-24.04.log &
     doBuild ubuntu-22.04 &> vcpkg-logs/ubuntu-22.04.log &
     doBuild rockylinux-8 &> vcpkg-logs/rockylinux-8.log &
+    doBuild rockylinux-10 &> vcpkg-logs/rockylinux-10.log &
 fi
 
 wait
