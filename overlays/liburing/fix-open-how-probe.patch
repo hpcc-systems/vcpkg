@@ -1,0 +1,17 @@
+diff --git a/configure b/configure
+index 4794306..ad8ca02 100755
+--- a/configure
++++ b/configure
+@@ -661,10 +661,12 @@ cat >> $compat_h << EOF
+ #include <inttypes.h>
+ 
++#if 0
+ struct open_how {
+     uint64_t        flags;
+     uint64_t        mode;
+     uint64_t        resolve;
+ };
++#endif
+ 
+ EOF
+ else cat >> $compat_h << EOF
