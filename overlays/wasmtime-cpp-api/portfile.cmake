@@ -9,6 +9,22 @@ vcpkg_extract_source_archive_ex(
     ARCHIVE ${ARCHIVE}
 )
 
+vcpkg_replace_string(
+    "${SOURCE_PATH}/include/wasmtime.hh"
+    "#include <optional>\n#include <variant>"
+    "#include <optional>\n#include <type_traits>\n#include <variant>"
+)
+vcpkg_replace_string(
+    "${SOURCE_PATH}/include/wasmtime.hh"
+    "class ExternRef {"
+    "class Val;\n\nclass ExternRef {"
+)
+vcpkg_replace_string(
+    "${SOURCE_PATH}/include/wasmtime.hh"
+    "  template <typename T>\n  explicit ExternRef(T val)"
+    "  template <typename T, std::enable_if_t<!std::is_same_v<std::decay_t<T>, Val>, int> = 0>\n  explicit ExternRef(T val)"
+)
+
 file(COPY ${SOURCE_PATH}/include/. DESTINATION ${CURRENT_PACKAGES_DIR}/include/wasmtime-cpp-api)
 
 # Handle copyright
