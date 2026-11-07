@@ -26,9 +26,8 @@ jobs:
             "ubuntu-22.04-x64",
             "windows-2025-x64",
             "windows-2022-x64",
-            "macos-13-x64",
-            "macos-14-arm64",
-            "macos-14-x86_64"
+            "macos-15-arm64",
+            "macos-15-x86_64"
           ]
         include:
           - label: "ubuntu-22.04-x64"
@@ -46,18 +45,13 @@ jobs:
             triplet: "x64-windows"
             mono: ""
             sudo: ""
-          - label: "macos-13-x64"
-            os: "macos-13"
-            triplet: "x64-osx"
-            mono: "mono"
-            sudo: "sudo"
-          - label: "macos-14-arm64"
-            os: "macos-14"
+          - label: "macos-15-arm64"
+            os: "macos-15"
             triplet: "arm64-osx"
             mono: "mono"
             sudo: "sudo"
-          - label: "macos-14-x86_64"
-            os: "macos-14"
+          - label: "macos-15-x86_64"
+            os: "macos-15-intel"
             triplet: "x64-osx"
             mono: "mono"
             sudo: "sudo"
@@ -105,10 +99,10 @@ jobs:
           sudo apt-get -yq install -f mono-complete
 
       - name: OSX Dependencies
-        if: ${{ matrix.os == 'macos-13' || matrix.os == 'macos-14' }}
+        if: ${{ matrix.os == 'macos-15' || matrix.os == 'macos-15-intel' }}
         shell: "bash"
         run: |
-          brew install bison flex pkg-config automake libtool autoconf autoconf-archive coreutils
+          brew install bison flex pkg-config automake libtool autoconf autoconf-archive coreutils mono
 
       - name: Check out source code
         uses: actions/checkout@v3
