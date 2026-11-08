@@ -1,6 +1,6 @@
 vcpkg_download_distfile(ARCHIVE
     URLS "https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-${VERSION}.tgz"
-    "https://mirror.eu.oneandone.net/software/openldap/openldap-release/openldap-${VERSION}.tgz"
+         "https://mirror.eu.oneandone.net/software/openldap/openldap-release/openldap-${VERSION}.tgz"
     FILENAME "openldap-${VERSION}.tgz"
     SHA512 18129ad9a385457941e3203de5f130fe2571701abf24592c5beffb01361aae3182c196b2cd48ffeecb792b9b0e5f82c8d92445a7ec63819084757bdedba63b20
 )
@@ -9,10 +9,10 @@ vcpkg_extract_source_archive(
     SOURCE_PATH
     ARCHIVE "${ARCHIVE}"
     PATCHES
-    android.diff
-    cyrus-sasl.diff
-    openssl.patch
-    subdirs.patch
+        android.diff
+        cyrus-sasl.diff
+        openssl.patch
+        subdirs.patch
 )
 
 vcpkg_list(SET FEATURE_OPTIONS)
@@ -39,19 +39,19 @@ vcpkg_make_configure(
     SOURCE_PATH "${SOURCE_PATH}"
     AUTORECONF
     OPTIONS
-    ${FEATURE_OPTIONS}
-    --disable-cleartext
-    --disable-mdb
-    --disable-relay
-    --disable-slapd
-    --disable-syncprov
-    --with-tls=openssl
-    --without-systemd
-    --without-fetch
-    --without-argon2
-    ac_cv_lib_iodbc_SQLDriverConnect=no
-    ac_cv_lib_odbc_SQLDriverConnect=no
-    ac_cv_lib_odbc32_SQLDriverConnect=no
+        ${FEATURE_OPTIONS}
+        --disable-cleartext
+        --disable-mdb
+        --disable-relay
+        --disable-slapd
+        --disable-syncprov
+        --with-tls=openssl
+        --without-systemd
+        --without-fetch
+        --without-argon2
+        ac_cv_lib_iodbc_SQLDriverConnect=no
+        ac_cv_lib_odbc_SQLDriverConnect=no
+        ac_cv_lib_odbc32_SQLDriverConnect=no
 )
 
 vcpkg_make_install(TARGETS depend install)
